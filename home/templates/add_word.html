@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!-- Created by CodingLab |www.youtube.com/CodingLabYT-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'add_word.css' %}">
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+   </head>
+<script>
+$(document).ready(function(){
+    var today = new Date();
+    var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
+    $('#time').text(date)
+
+    var wordidx=[], tokens=[]
+    var wordchoosed=''
+    function reset()
+    {
+        $('.tokens_display').remove()
+        $('#setup-and-submit').attr('hidden', 'hidden')
+        wordidx=[]
+    }
+    $(document).on('blur', 'input#sentence', function(){
+        reset()
+        $('#choose-words').append('<div class="tokens_display"></div>')
+        text=$(this).val()
+        tokens = text.split(" "); //chua xu ly het khuc nay
+        for (let i = 0; i < tokens.length; i++) {
+            if(tokens[i]!="")
+            {
+                $('.tokens_display').append(
+                    '<p id='+i+'>'+tokens[i]+'&nbsp</p>')
+                console.log(tokens[i])
+            }
+        }
+    });
+
+    $(document).on('click', '.tokens_display>p', function(){
+        $('#setup-and-submit').removeAttr('hidden')
+        id=parseInt($(this).attr('id'));
+        var index = wordidx.indexOf(id);
+        if (index > -1) {
+            wordidx.splice(index, 1);
+            $(this).removeClass("highlight");
+        }
+        else
+        {
+            wordidx.push(id);
+            $(this).addClass("highlight");
+            wordidx.sort(function(a, b){return a - b});
+        }
+        console.log(wordidx)
+        wordchoosed='';
+        for (let i = 0; i < wordidx.length; i++) 
+            wordchoosed+=tokens[wordidx[i]]+' '
+        console.log(wordchoosed)
+        $('#wordchoosed').text(wordchoosed)
+    });
+
+    $(document).on('click', '#summit_button', function(){
+        $.ajax({
+            url: "/home/ajax_add_word/",
+            type: 'get',
+            contentType: 'appication/json',
+            data: {
+                'wordidx': wordidx,
+                'sentence': $('input#sentence').val(),
+                'meaning': $('input#meaning').val(),
+                'note': $('textarea#note').val(),
+                'list_id': $('#list_choose').val(),
+            },
+            success: function(response){
+                setTimeout(function() {alert('Đã thêm');}, 500);
+            }
+        })
+    });
+
+    
+});
+</script>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <h2>Vocab Notebook</h2>
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i>Home</a></li>
+            <li><a href="#"><i class="fas fa-user"></i>Profile</a></li>
+            <li><a href="#"><i class="fas fa-address-card"></i>About</a></li>
+            <li><a href="#"><i class="fas fa-project-diagram"></i>Word</a></li>
+            <!-- <li><a href="#"><i class="fas fa-blog"></i>Blogs</a></li>
+            <li><a href="#"><i class="fas fa-address-book"></i>Contact</a></li>
+            <li><a href="#"><i class="fas fa-map-pin"></i>Map</a></li> -->
+        </ul> 
+        <p id="time" class="center"></p>
+        <a href="/logout">Đăng xuất</a>
+    </div>
+    <div class="main_content">
+        <div>
+        <p class="header">Thêm từ vựng</p><br>
+            <input id='sentence' class='big-input-text'type="text" placeholder="Nhập câu" name="sentence">
+            <div id="choose-words"><p class="tittle">Chọn từ</p></div>
+            <div id="setup-and-submit" hidden>
+                <div class="word_info">
+                    <table>
+                        <tr>
+                            <td style="vertical-align: top">
+                                <div style="display: flex;">
+                                    <p class="tittle">Từ đã chọn:</p> 
+                                    <p id="wordchoosed" class="content_text"></p>
+                                </div>
+                                <input id='meaning' type="text" class="med-input-text" placeholder="Nghĩa">
+                            </td>
+                            <td style="vertical-align: top">
+                                <p class="tittle">Ghi chú</p>
+                                <textarea id="note" class='text-area' cols="30" rows="10"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <select id="list_choose">
+                    {% for list in lists %}
+                    <option value={{ list.list_id }}>{{ list.listname }}</option>
+                    {% endfor %}
+                </select>
+                <button id="summit_button" class="e-button">Thêm</button>
+            </div>
+        </div>
+        <!-- <div class="tittle">tittle</div> -->
+    </div>
+</div>
+</div>
+</body>
+</html>
