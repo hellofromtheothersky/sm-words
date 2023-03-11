@@ -26,7 +26,7 @@ body{
   position: fixed;
 }
 
-.wrapper .sidebar h2{
+.wrapper .sidebar h4{
   color: #fffd7b;
   /* text-transform: uppercase; */
   text-align: center;
@@ -40,7 +40,7 @@ body{
 
 
 .wrapper .sidebar ul li{
-  padding: 15px;
+  padding: 10px;
   border-bottom: 1px solid #000000;
   border-bottom: 1px solid rgba(0,0,0,0.05);
   border-top: 1px solid rgba(255,255,255,0.05);
@@ -101,7 +101,7 @@ body{
 }
 
 .wrapper .main_content .tittle{
-  margin: 20px;
+  margin: 8px;
   color: #717171;
   line-height: 25px;
 }
@@ -111,7 +111,7 @@ body{
 }
 
 .content_text{
-  margin: 20px 0px 20px 0px;
+  margin: 8px 0px 20px 0px;
   color: #000000;
   line-height: 25px;
   margin-bottom: 20px;
@@ -127,30 +127,31 @@ body{
   border: 2px solid rgb(221, 235, 30);
   border-radius: 4px;
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
+  padding: 6px 10px;
   box-sizing: border-box;
-  font-size: 20px;
+  font-size: 18px;
+  margin-left: 8px;
 }
 
 .med-input-text {
   border: 2px solid rgb(221, 235, 30);
   border-radius: 4px;
   width: 500px;
-  padding: 12px 20px;
+  padding: 6px 10px;
   margin: 8px;
   box-sizing: border-box;
 }
 
 .text-area{
-  width: 500px;
-  padding: 12px 20px;
+  width: 300px;
+  height: 100px;
+  padding: 6px 10px;
   margin: 8px;
 }
 
 .tokens_display{
   display: flex; 
-  font-size: 20px;
+  font-size: 18px;
   margin: 20px;
 }
 
@@ -199,16 +200,16 @@ body{
 select {
     width: 150px;
     height: 30px;
-    margin: 10px;
-    font-size: 15px;
+    font-size: 18px;
+    padding: 6px 10px;
+    margin-left: 8px;
 }
 
 select option {
-  font-size: 15px;
-  margin: 40px;
+  font-size: 18px;
   background: rgba(16, 16, 16, 0.3);
   color: #fff;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  margin-left: 8px;
 }
-
-

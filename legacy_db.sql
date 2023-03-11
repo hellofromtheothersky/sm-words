@@ -10,14 +10,14 @@ use smart_vocab_notebook;
 -- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
 
 
-CREATE TABLE `users` (
-    `user_id` int auto_increment,
-    `username` varchar(15)  NOT NULL unique,
-    `passw` varchar(30)  NOT NULL ,
-    PRIMARY KEY (
-        `user_id`
-    )
-);
+-- CREATE TABLE `users` (
+--     `user_id` int auto_increment,
+--     `username` varchar(15)  NOT NULL unique,
+--     `passw` varchar(30)  NOT NULL ,
+--     PRIMARY KEY (
+--         `user_id`
+--     )
+-- );
 
 CREATE TABLE `lists` (
     `list_id` int  auto_increment ,
