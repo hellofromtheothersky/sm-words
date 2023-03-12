@@ -9,4 +9,5 @@ urlpatterns=[
     path('', views.add_word, name='add_word'),
     path('add_word/', views.add_word, name='add_word'),
     path('ajax_add_word/', views.ajax_add_word),
+    path('show_list/', views.show_list)
 ]

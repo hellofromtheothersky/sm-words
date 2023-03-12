@@ -10,14 +10,14 @@ use smart_vocab_notebook;
 -- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
 
 
--- CREATE TABLE `users` (
---     `user_id` int auto_increment,
---     `username` varchar(15)  NOT NULL unique,
---     `passw` varchar(30)  NOT NULL ,
---     PRIMARY KEY (
---         `user_id`
---     )
--- );
+CREATE TABLE `users` (
+    `user_id` int auto_increment,
+    `username` varchar(15)  NOT NULL unique,
+    -- `passw` varchar(30)  NOT NULL ,
+    PRIMARY KEY (
+        `user_id`
+    )
+);
 
 CREATE TABLE `lists` (
     `list_id` int  auto_increment ,
@@ -88,18 +88,17 @@ ALTER TABLE `enrolment` ADD CONSTRAINT `fk_enrolment_class_id` FOREIGN KEY(`clas
 REFERENCES `classes` (`class_id`);
 
 DELIMITER $$
-CREATE TRIGGER Create_first_list
-    AFTER INSERT ON users FOR EACH ROW    
+CREATE TRIGGER Create_user_miror_and_intial_list
+    AFTER INSERT ON auth_user FOR EACH ROW    
         BEGIN    
-        	INSERT INTO lists(listname, user_id)
-            VALUES('Danh sách đầu tiên', new.user_id);
+        	INSERT INTO users(user_id, username)
+            VALUES(new.id, new.username);
+           INSERT INTO lists(listname, user_id)
+            VALUES('Danh sách đầu tiên', new.id);
         END;$$
 DELIMITER ;
 
 select * from users;
-insert Into users(username, passw) values('hieu', 'abc');
-insert into lists(listname, user_id) values('toeic common words', 1);
-
 select * from lists;
 select * from sentences;
-select * from lists;
+

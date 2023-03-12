@@ -65,7 +65,6 @@ class Teaching(models.Model):
 class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(unique=True, max_length=15)
-    passw = models.CharField(max_length=30)
 
     class Meta:
         managed = False

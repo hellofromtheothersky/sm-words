@@ -5,6 +5,7 @@ from .models import Lists, Sentences, Users
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User as User_dj
 # Create your views here.
 
 
@@ -31,7 +32,8 @@ def logout_user(request):
 
 @login_required
 def add_word(request):
-    return render(request, 'add_word.html', {'lists': Lists.objects.all})
+    cur_user=request.user.id
+    return render(request, 'add_word.html', {'lists': Lists.objects.filter(user_id=cur_user)})
 
 
 @login_required
@@ -52,3 +54,8 @@ def ajax_add_word(request):
             )
         m.save()
         return JsonResponse({"status": 'success'})
+    
+    
+@login_required
+def show_list(request):
+    return render(request, 'show_list.html')
