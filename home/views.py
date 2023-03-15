@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as User_dj
+from django.db import connection
 # Create your views here.
 
 
@@ -44,18 +45,49 @@ def ajax_add_word(request):
         note= request.GET.get('note')
         list_id= request.GET.get('list_id')
         wordidx = request.GET.getlist("wordidx[]")
+        tokens=sentence.split()
         m=Sentences(
             sentences=sentence, 
             meaning=meaning, 
+            lemma=' '.join([tokens[i] for i in range(int(wordidx[0]), int(wordidx[-1])+1)]),
             note=note, 
             word_start_pos=wordidx[0], 
             word_end_pos=wordidx[-1], 
-            list_id=list_id
+            list_id=list_id,
             )
         m.save()
         return JsonResponse({"status": 'success'})
     
-    
+
+def dictfetchall(cursor): 
+    desc = cursor.description 
+    return [
+            dict(zip([col[0] for col in desc], row)) 
+            for row in cursor.fetchall() 
+    ]
+
+
 @login_required
-def show_list(request):
-    return render(request, 'show_list.html')
+def show_list_word(request):
+    cur_user=request.user.id
+
+    with connection.cursor() as c:
+        c.execute("""select * from sentences s  where s.list_id in 
+                    (
+                        select list_id from lists l where l.user_id=%s
+                    )
+                  """, [cur_user])
+        rows=dictfetchall(c)
+        
+    return render(request, 'show_list_word.html', {
+        'lists': Lists.objects.filter(user_id=cur_user),
+        'sents': rows
+        })
+
+@login_required
+def ajax_delete_list(request):
+    if request.method=='GET':
+        list_id=request.GET.get('list_id')
+        print(list_id)
+        Lists.objects.filter(list_id=list_id).delete()
+        return JsonResponse({"status": 'success'})

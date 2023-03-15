@@ -1,0 +1,117 @@
+{% extends 'sidebar.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style_add_word.css' %}">
+<script>
+    $(document).ready(function(){
+        $("a[id='my_vocab']").addClass("active");
+    });
+    $(document).on('click', '.list_of_word', function(){
+        list_id=$(this).attr('id')
+        $('.sentence_of_list').each(function() {
+            if($(this).attr('data-lists_id')==list_id)
+                $(this).removeAttr("hidden");
+            else
+                $(this).attr('hidden', 'hidden');
+        });
+    });
+    $(document).on('click', '.list_of_word_all', function(){
+        $('.sentence_of_list').each(function() {
+            $(this).removeAttr("hidden");
+        });
+    });
+    var crud_model=-1
+    $(document).on('click', '.crud_mode', function(){
+        crud_model*=-1
+        if(crud_model==1)
+        {
+            $(this).text('Tắt chỉnh sửa')
+            $('.crud').each(function() {
+                $(this).removeAttr("hidden");
+            });
+        }
+        else
+        {
+            $(this).text('Chỉnh sửa')
+            $('.crud').each(function() {
+                $(this).attr('hidden', 'hidden');
+            });
+        }
+    });
+    $(document).on('click', '.delete', function(){
+        list_id=$(this).parent().parent().parent().parent().parent().attr('id')
+        console.log(list_id)
+        $.ajax({
+                url: "/ajax_delete_list/",
+                type: 'get',
+                contentType: 'appication/json',
+                data: {
+                    'list_id': list_id,
+                },
+                success: function(response){
+                    setTimeout(function() {alert('Đã xoas');}, 500);
+                }
+            })
+    });
+</script>
+<p class="header">Từ vựng của tôi</p>
+<br>
+<button type="button" class="crud_mode btn btn-link">Chỉnh sửa</button>
+<table>
+    <tr>
+        <div style="overflow-y: scroll">
+        <td style="width: 250px; vertical-align: top;">
+            <div class="list-group">
+                <a href="#" class="list_of_word_all list-group-item list-group-item-action list-group-item-dark">Tất cả</a>
+                {% for list in lists %}
+                <a id="{{ list.list_id }}" href="#" class="list_of_word list-group-item list-group-item-action list-group-item-secondary">
+                    {{ list.listname }}
+                    <table class="crud" hidden>
+                        <tr>
+                            <td >
+                                <button type="button" class="btn btn-warning btn-sm">Sửa</button>
+                            </td>
+                            <td>
+                                <button type="button" class="delete btn btn-danger btn-sm">Xóa</button>
+                            </td>
+                        </tr>
+                    </table>
+                </a>
+                <!-- <span class="badge badge-primary badge-pill" style="color: black;">14</span> -->
+                {% endfor %}
+            </div>
+            <button type="button" class="crud btn btn-primary btn-sm" hidden>Thêm</button>
+        </td>
+    </div>
+        <td>
+            <div style="width: 10px;"></div>
+        </td>
+        <td>
+            <ol class="list-group list-group-numbered">
+                {% for sent in sents %}
+                    <div id="{{ sent.sentences_id }}" class="sentence_of_list" data-lists_id="{{ sent.list_id }}">
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">{{ sent.lemma }}</div>
+                                    <p style="margin: 0px 0px 0px 0px;">- {{ sent.meaning }}</p>
+                                    <p style="margin: 0px 0px 0px 20px;">- {{ sent.sentences }}</p>
+                                    <table class="crud" hidden>
+                                        <tr>
+                                            <td >
+                                                <button type="button" class="btn btn-warning btn-sm">Sửa</button>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm">Xóa</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <!-- <span class="badge bg-primary rounded-pill">14</span> -->
+                            </li>
+                    </div>
+                {% endfor %}    
+             </ol>
+        </td>
+    </tr>
+</table>
+{% endblock content %}

@@ -4,6 +4,11 @@
 <link rel="stylesheet" href="{% static 'css/style_add_word.css' %}">
 <script>
     $(document).ready(function(){
+        $("a[id='add_word']").addClass("active");
+    });
+</script>
+<script>
+    $(document).ready(function(){
         var today = new Date();
         var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
         $('#time').text(date)

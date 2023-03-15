@@ -42,6 +42,7 @@ class Sentences(models.Model):
     sentences_id = models.AutoField(primary_key=True)
     sentences = models.CharField(max_length=200)
     meaning = models.CharField(max_length=50, blank=True, null=True)
+    lemma = models.CharField(max_length=50, blank=True, null=True)
     note = models.CharField(max_length=200, blank=True, null=True)
     word_start_pos = models.IntegerField()
     word_end_pos = models.IntegerField()

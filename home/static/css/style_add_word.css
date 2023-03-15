@@ -11,6 +11,7 @@ body{
   color: #717171;
   border-bottom: 1px solid #e0e4e8;
   font-size: 20px;
+  overflow-y: hidden;
 }
 
 .text-area{

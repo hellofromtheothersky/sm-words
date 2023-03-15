@@ -140,9 +140,21 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link active" aria-current="page">
+        <a id="home" href="#" class="nav-link text-white" aria-current="page">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"/></svg>
-          Home
+          Trang chủ
+        </a>
+      </li>
+      <li>
+        <a id='add_word' href="/add_word/" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
+          Thêm từ vựng
+        </a>
+      </li>
+      <li>
+        <a id="my_vocab" href="/show_list_word/" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
+          Từ vựng của tôi
         </a>
       </li>
       <li>
@@ -155,12 +167,6 @@
         <a href="#" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"/></svg>
           Orders
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
-          Products
         </a>
       </li>
       <li>
@@ -185,7 +191,7 @@
     </div>
   </div>
   <div style="width: 10px;" class="b-example-vr"></div>  
-  <div style="width: 1000px;">
+  <div style="max-width: 100%;" class="scrollarea">
     {% block content %}
     
     {% endblock content %}
