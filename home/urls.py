@@ -10,5 +10,5 @@ urlpatterns=[
     path('add_word/', views.add_word, name='add_word'),
     path('ajax_add_word/', views.ajax_add_word),
     path('show_list_word/', views.show_list_word),
-    path('ajax_delete_list/', views.ajax_delete_list),
+    path('ajax_crud_list/', views.ajax_crud_list),
 ]

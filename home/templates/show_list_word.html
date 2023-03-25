@@ -6,6 +6,19 @@
     $(document).ready(function(){
         $("a[id='my_vocab']").addClass("active");
     });
+
+    function getParentText(parentElement) {
+        let parentText = "";
+        for (let i = 0; i < parentElement.childNodes.length; i++) {
+            const childNode = parentElement.childNodes[i];
+            if (childNode.nodeType === Node.TEXT_NODE) {
+            parentText += childNode.textContent;
+            }
+        }
+        return parentText.trim();
+    }
+
+    //choose list
     $(document).on('click', '.list_of_word', function(){
         list_id=$(this).attr('id')
         $('.sentence_of_list').each(function() {
@@ -20,10 +33,12 @@
             $(this).removeAttr("hidden");
         });
     });
-    var crud_model=-1
+
+    //switch crud mode
+    var crud_mode=-1
     $(document).on('click', '.crud_mode', function(){
-        crud_model*=-1
-        if(crud_model==1)
+        crud_mode*=-1
+        if(crud_mode==1)
         {
             $(this).text('Tắt chỉnh sửa')
             $('.crud').each(function() {
@@ -38,20 +53,71 @@
             });
         }
     });
-    $(document).on('click', '.delete', function(){
-        list_id=$(this).parent().parent().parent().parent().parent().attr('id')
-        console.log(list_id)
-        $.ajax({
-                url: "/ajax_delete_list/",
-                type: 'get',
-                contentType: 'appication/json',
-                data: {
-                    'list_id': list_id,
-                },
-                success: function(response){
-                    setTimeout(function() {alert('Đã xoas');}, 500);
-                }
-            })
+
+    //CRUD
+    function list_crud(action, this_el=NaN){
+        if(action=='c') //from button in the model screen
+        {
+            listname=$('#addlistmodel input#listname').val()
+            if(listname!='')
+                $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'listname': listname,
+                        'action': 'c',
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+        else if(action=='d') //from button in the main screen
+        {
+            list_id=$('#deletelistmodel').data("list_id")
+            $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'list_id': list_id,
+                        'action': 'd'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+        else if(action=='u') //from button in the model screen
+        {
+            list_id=$('#editlistmodel').data("list_id")
+            listname=$('#editlistmodel input#listname').val()
+            $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'list_id': list_id,
+                        'listname': listname,
+                        'action': 'u'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+    }
+
+    $(document).on('click', '.edit_list', function(){
+        list=$(this).parent().parent().parent().parent().parent()
+        $('#editlistmodel input#listname').val(getParentText(list[0]))
+        $('#editlistmodel').data("list_id", list.attr('id'))
+    });
+    $(document).on('click', '.delete_list', function(){
+        list=$(this).parent().parent().parent().parent().parent()
+        $('#deletelistmodel').data("list_id", list.attr('id'))
+        console.log($('#deletelistmodel').data("list_id"))
     });
 </script>
 <p class="header">Từ vựng của tôi</p>
@@ -68,11 +134,11 @@
                     {{ list.listname }}
                     <table class="crud" hidden>
                         <tr>
-                            <td >
-                                <button type="button" class="btn btn-warning btn-sm">Sửa</button>
+                            <td>
+                                <button type="button" class="edit_list btn btn-warning btn-sm" data-toggle="modal" data-target="#editlistmodel">Sửa</button>
                             </td>
                             <td>
-                                <button type="button" class="delete btn btn-danger btn-sm">Xóa</button>
+                                <button type="button" class="delete_list btn btn-danger btn-sm" data-toggle="modal" data-target="#deletelistmodel">Xóa</button>
                             </td>
                         </tr>
                     </table>
@@ -80,7 +146,7 @@
                 <!-- <span class="badge badge-primary badge-pill" style="color: black;">14</span> -->
                 {% endfor %}
             </div>
-            <button type="button" class="crud btn btn-primary btn-sm" hidden>Thêm</button>
+            <button type="button" class="crud btn btn-primary btn-sm" data-toggle="modal" data-target="#addlistmodel" hidden>Thêm</button>
         </td>
     </div>
         <td>
@@ -114,4 +180,5 @@
         </td>
     </tr>
 </table>
+{% include 'list_crud.html' %}
 {% endblock content %}

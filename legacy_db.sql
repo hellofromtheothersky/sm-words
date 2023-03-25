@@ -70,7 +70,7 @@ ALTER TABLE `lists` ADD CONSTRAINT `fk_lists_user_id` FOREIGN KEY(`user_id`)
 REFERENCES `users` (`user_id`);
 
 ALTER TABLE `sentences` ADD CONSTRAINT `fk_sentences_list_id` FOREIGN KEY(`list_id`)
-REFERENCES `lists` (`list_id`);
+REFERENCES `lists` (`list_id`) on DELETE cascade;
 
 ALTER TABLE `classes` ADD CONSTRAINT `fk_classes_user_id` FOREIGN KEY(`user_id`)
 REFERENCES `users` (`user_id`);
@@ -97,8 +97,3 @@ CREATE TRIGGER Create_user_miror_and_intial_list
             VALUES('Danh sách đầu tiên', new.id);
         END;$$
 DELIMITER ;
-
-select * from users;
-select * from lists;
-select * from sentences;
-

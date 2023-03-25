@@ -85,9 +85,20 @@ def show_list_word(request):
         })
 
 @login_required
-def ajax_delete_list(request):
+def ajax_crud_list(request):
     if request.method=='GET':
-        list_id=request.GET.get('list_id')
-        print(list_id)
-        Lists.objects.filter(list_id=list_id).delete()
-        return JsonResponse({"status": 'success'})
+        action=request.GET.get('action')
+        if action=='c':
+            listname=request.GET.get('listname')
+            m=Lists(listname=listname, user_id=request.user.id)
+            m.save()
+            return JsonResponse({"status": 'success'})
+        elif action=='d':
+            list_id=request.GET.get('list_id')
+            Lists.objects.filter(list_id=list_id).delete()
+            return JsonResponse({"status": 'success'})
+        elif action=='u':
+            list_id=request.GET.get('list_id')
+            listname=request.GET.get('listname')
+            Lists.objects.filter(list_id=list_id).update(listname=listname)
+            return JsonResponse({"status": 'success'})
