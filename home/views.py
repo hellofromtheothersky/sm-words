@@ -32,12 +32,6 @@ def logout_user(request):
 
 
 @login_required
-def add_word(request):
-    cur_user=request.user.id
-    return render(request, 'add_word.html', {'lists': Lists.objects.filter(user_id=cur_user)})
-
-
-@login_required
 def ajax_add_word(request):
     if request.method=='GET':
         sentence= request.GET.get('sentence')

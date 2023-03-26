@@ -1,12 +1,5 @@
-{% extends 'sidebar.html' %}
-{% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/style_add_word.css' %}">
-<script>
-    $(document).ready(function(){
-        $("a[id='add_word']").addClass("active");
-    });
-</script>
 <script>
     $(document).ready(function(){
         var today = new Date();
@@ -80,34 +73,45 @@
         
     });
 </script>
-<p class="header">Thêm từ vựng</p>
-<br>
-<input id='sentence' class='form-control form-control-lg' type="text" placeholder="Nhập câu" name="sentence"><br>
-<div id="choose-words" hidden><p class="tittle">Chọn từ</p></div>
-<div id="setup-and-submit" hidden>
-    <div class="word_info">
-        <table>
-            <tr>
-                <td style="vertical-align: top">
-                    <div style="display: flex;">
-                        <p class="tittle">Từ đã chọn:&nbsp;</p> 
-                        <p id="wordchoosed" class="content_text" style="color: #b9be11;"></p>
-                    </div>
-                    <input id='meaning' type="text" class="form-control" placeholder="Nghĩa">
-                </td>
-                <td style="vertical-align: top;">
-                    <p style="margin-left: 12px;" class="tittle">Ghi chú</p>
-                    <textarea style="margin-left: 12px;" id="note" class='text-area' cols="30" rows="10"></textarea>
-                </td>
-            </tr>
-        </table>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Thêm từ vựng</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input id='sentence' class='form-control form-control-lg' type="text" placeholder="Nhập câu" name="sentence"><br>
+            <div id="choose-words" hidden><p class="tittle">Chọn từ</p></div>
+            <div id="setup-and-submit" hidden>
+                <div class="word_info">
+                    <table>
+                        <tr>
+                            <td style="vertical-align: top">
+                                <div style="display: flex;">
+                                    <p class="tittle">Từ đã chọn:&nbsp;</p> 
+                                    <p id="wordchoosed" class="content_text" style="color: #b9be11;"></p>
+                                </div>
+                                <input id='meaning' type="text" class="form-control" placeholder="Nghĩa">
+                            </td>
+                            <td style="vertical-align: top;">
+                                <p style="margin-left: 12px;" class="tittle">Ghi chú</p>
+                                <textarea style="margin-left: 12px;" id="note" class='text-area' cols="30" rows="10"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br>
+                <select id="list_choose">
+                    {% for list in lists %}
+                    <option value={{ list.list_id }}>{{ list.listname }}</option>
+                    {% endfor %}
+                </select>
+                <button id="summit_button" class="e-button">Thêm</button>
+            </div>
+        </div>
     </div>
-    <br>
-    <select id="list_choose">
-        {% for list in lists %}
-        <option value={{ list.list_id }}>{{ list.listname }}</option>
-        {% endfor %}
-    </select>
-    <button id="summit_button" class="e-button">Thêm</button>
+  </div>
 </div>
-{% endblock content %}

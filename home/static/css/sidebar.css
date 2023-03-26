@@ -57,3 +57,12 @@ main {
 .scrollarea {
   overflow-y: auto;
 }
+
+.btn-primary {
+  background-color: #b9be11 !important;
+  border-style: none;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:visited{
+  background-color: #969b0f !important;
+}
