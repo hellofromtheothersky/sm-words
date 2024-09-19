@@ -42,72 +42,6 @@
             });
         }
     });
-
-    //CRUD
-    function list_crud(action, this_el=NaN){
-        if(action=='c') //from button in the model screen
-        {
-            listname=$('#addlistmodel input#listname').val()
-            if(listname!='')
-                $.ajax({
-                    url: "/ajax_crud_list/",
-                    type: 'get',
-                    contentType: 'appication/json',
-                    data: {
-                        'listname': listname,
-                        'action': 'c',
-                    },
-                    success: function(response){
-                        window.location.reload();
-                    }
-                })
-        }
-        else if(action=='d') //from button in the main screen
-        {
-            list_id=$('#deletelistmodel').data("list_id")
-            $.ajax({
-                    url: "/ajax_crud_list/",
-                    type: 'get',
-                    contentType: 'appication/json',
-                    data: {
-                        'list_id': list_id,
-                        'action': 'd'
-                    },
-                    success: function(response){
-                        window.location.reload();
-                    }
-                })
-        }
-        else if(action=='u') //from button in the model screen
-        {
-            list_id=$('#editlistmodel').data("list_id")
-            listname=$('#editlistmodel input#listname').val()
-            $.ajax({
-                    url: "/ajax_crud_list/",
-                    type: 'get',
-                    contentType: 'appication/json',
-                    data: {
-                        'list_id': list_id,
-                        'listname': listname,
-                        'action': 'u'
-                    },
-                    success: function(response){
-                        window.location.reload();
-                    }
-                })
-        }
-    }
-
-    $(document).on('click', '.edit_list', function(){
-        list=$(this).parentsUntil("div").siblings().first()
-        $('#editlistmodel input#listname').val(list.text().trim())
-        $('#editlistmodel').data("list_id", list.attr('id'))
-    });
-    $(document).on('click', '.delete_list', function(){
-        list=$(this).parentsUntil("div").siblings().first()
-        $('#deletelistmodel .modal-title').text('Xóa danh sách: ' + list.text().trim())
-        $('#deletelistmodel').data("list_id", list.attr('id'))
-    });
 </script>
 <p class="header">Từ vựng của tôi</p>
 <br>
@@ -126,7 +60,7 @@
                         <table class="crud" hidden>
                             <tr>
                                 <td>
-                                    <button type="button" class="edit_list btn btn-warning btn-sm" data-toggle="modal" data-target="#editlistmodel"></button>
+                                    <button type="button" class="edit_list btn btn-warning btn-sm" data-toggle="modal" data-target="#addOrEditlistmodel"></button>
                                 </td>
                                 <td>
                                     <button type="button" class="delete_list btn btn-danger btn-sm" data-toggle="modal" data-target="#deletelistmodel"></button>
@@ -138,7 +72,7 @@
                     {% endfor %}
                 </div>
                 <br>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addlistmodel">+ danh sách</button>
+                <button type="button" class="add_list btn btn-primary btn-sm" data-toggle="modal" data-target="#addOrEditlistmodel">+ danh sách</button>
                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg">+ từ vựng</button>
             </td>
     </div>
@@ -148,7 +82,7 @@
         <td>
             <ol class="list-group list-group-numbered">
                 {% for sent in sents %}
-                    <div id="{{ sent.sentences_id }}" class="sentence_of_list" data-lists_id="{{ sent.list_id }}">
+                    <div id="{{ sent.sentence_id }}" class="sentence_of_list" data-lists_id="{{ sent.list_id }}">
                             <li class="list-group-item d-flex justify-content-between align-items-start">
                                 <div class="ms-2 me-auto">
                                     <div style="display: flex;">
@@ -165,7 +99,7 @@
                                         </table>
                                     </div>
                                     <p style="margin: 0px 0px 0px 0px;">- {{ sent.meaning }}</p>
-                                    <p style="margin: 0px 0px 0px 20px;">- {{ sent.sentences }}</p>
+                                    <p style="margin: 0px 0px 0px 20px;">- {{ sent.sentence }}</p>
                                 </div>
                                 <!-- <span class="badge bg-primary rounded-pill">14</span> -->
                             </li>

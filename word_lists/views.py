@@ -43,7 +43,7 @@ def ajax_add_word(request):
         wordidx = request.GET.getlist("wordidx[]")
         tokens=sentence.split()
         m=Sentences(
-            sentences=sentence, 
+            sentence=sentence, 
             meaning=meaning, 
             lemma=' '.join([tokens[i] for i in range(int(wordidx[0]), int(wordidx[-1])+1)]),
             note=note, 

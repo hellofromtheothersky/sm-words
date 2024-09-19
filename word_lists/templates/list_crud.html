@@ -1,9 +1,87 @@
 <!-- Modal -->
-<div class="modal fade" id="addlistmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<script>
+    function list_crud(action){
+        if(action=='c') //from button in the model screen
+        {
+            list_new_name=$('#addOrEditlistmodel input#listname').val()
+            if(list_new_name!='')
+                $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'listname': list_new_name,
+                        'action': 'c',
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+        else if(action=='d') //from button in the main screen
+        {
+            list_id=list.attr('id')
+            $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'list_id': list_id,
+                        'action': 'd'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+        else if(action=='u') //from button in the model screen
+        {
+            list_id=list.attr('id')
+            list_new_name=$('#addOrEditlistmodel input#listname').val()
+            $.ajax({
+                    url: "/ajax_crud_list/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'list_id': list_id,
+                        'listname': list_new_name,
+                        'action': 'u'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+    }
+    $(document).on('click', '.add_list', function(){
+        $('#addOrEditlistmodel .modal-title').text('Thêm danh sách')
+
+        $('#addOrEditlistmodel .btn').text('Thêm')
+        $('#addOrEditlistmodel .btn').click(function() {
+                list_crud('c');
+            });
+    });
+    $(document).on('click', '.edit_list', function(){
+        $('#addOrEditlistmodel .modal-title').text('Sửa danh sách')
+
+        $('#addOrEditlistmodel .btn').text('Sửa')
+        $('#addOrEditlistmodel .btn').click(function() {
+                list_crud('u');
+            });
+
+        list=$(this).parentsUntil("div").siblings().first()
+        $('#addOrEditlistmodel input#listname').val(list.text().trim())
+    });
+    $(document).on('click', '.delete_list', function(){
+        list=$(this).parentsUntil("div").siblings().first()
+        $('#deletelistmodel .deleted_list_name').text(list.text().trim())
+    });
+</script>
+<div class="modal fade" id="addOrEditlistmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Thêm danh sách</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Thêm/Sửa</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -12,25 +90,7 @@
             <input id="listname" class="form-control" type="text" placeholder="Tên danh sách">
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" onclick="list_crud('c');">Thêm</button>
-        </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="editlistmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Sửa danh sách</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <input id="listname" class="form-control" type="text" placeholder="Sửa danh sách">
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-warning" onclick="list_crud('u');">Sửa</button>
+            <button type="button" class="btn btn-warning">Thêm/Sửa</button>
         </div>
         </div>
     </div>
@@ -39,13 +99,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel"></h5>
+            <h5 class="modal-title" id="exampleModalLabel">Xoá danh sách</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
-            <p>Xóa danh sách sẽ xóa luôn các từ vựng trong danh sách đó!</p>
+            <p>Xóa danh sách sẽ bao gồm các từ vựng của nó</p>
+            <p>Xoá <strong class="deleted_list_name"></strong></p>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-danger" onclick="list_crud('d');">Xóa</button>
