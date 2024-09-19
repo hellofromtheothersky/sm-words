@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class AddWordConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "home"
+    name = "word_lists"

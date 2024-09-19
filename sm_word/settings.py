@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "home",
+    "word_lists",
 ]
 
 MIDDLEWARE = [
@@ -75,13 +75,9 @@ WSGI_APPLICATION = "sm_word.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'smart_vocab_notebook',  
-        'USER': 'root',  
-        'PASSWORD': 'Hieu_14102002',  
-        'HOST': 'localhost',  
-        'PORT': '3306',  
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 

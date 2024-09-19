@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Lists, Sentences, Users
+from .models import Lists, Sentences, User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,8 +17,10 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('add_word')
+            print('alo')
+            return redirect('word_lists_words')
         else:
+            print('alffffo')
             messages.success(request, ('Không hợp lệ, hãy thử lại...'))
             return redirect('login') #name of a view, not the fuction name
         
