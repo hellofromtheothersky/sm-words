@@ -34,26 +34,44 @@ def logout_user(request):
 
 
 @login_required
-def ajax_add_word(request):
+def ajax_word_crud(request):
     if request.method=='GET':
-        sentence= request.GET.get('sentence')
-        meaning= request.GET.get('meaning')
-        note= request.GET.get('note')
-        list_id= request.GET.get('list_id')
-        wordidx = request.GET.getlist("wordidx[]")
-        tokens=sentence.split()
-        m=Sentences(
-            sentence=sentence, 
-            meaning=meaning, 
-            lemma=' '.join([tokens[i] for i in range(int(wordidx[0]), int(wordidx[-1])+1)]),
-            note=note, 
-            word_start_pos=wordidx[0], 
-            word_end_pos=wordidx[-1], 
-            list_id=list_id,
-            )
-        m.save()
-        return JsonResponse({"status": 'success'})
-    
+        action=request.GET.get('action')
+        if action=='c' or action=='u':
+            sentence= request.GET.get('sentence')
+            meaning= request.GET.get('meaning')
+            note= request.GET.get('note')
+            list_id= request.GET.get('list_id')
+            choosed_word_tokens_pos = request.GET.getlist("choosed_word_tokens_pos[]")
+            tokens=sentence.split()
+            lemma=' '.join([tokens[i] for i in range(int(choosed_word_tokens_pos[0]), int(choosed_word_tokens_pos[-1])+1)])
+            if action=='c':
+                m=Sentences(
+                    sentence=sentence, 
+                    meaning=meaning, 
+                    lemma=lemma,
+                    note=note, 
+                    word_start_pos=choosed_word_tokens_pos[0], 
+                    word_end_pos=choosed_word_tokens_pos[-1], 
+                    list_id=list_id,
+                    )
+                m.save()
+                return JsonResponse({"status": 'success'})
+            elif action=='u':
+                sentence_id= request.GET.get('sentence_id')
+                Sentences.objects.filter(sentence_id=sentence_id).update(sentence=sentence, 
+                                                                            meaning=meaning, 
+                                                                            lemma=lemma,
+                                                                            note=note, 
+                                                                            word_start_pos=choosed_word_tokens_pos[0], 
+                                                                            word_end_pos=choosed_word_tokens_pos[-1], 
+                                                                            list_id=list_id)
+                return JsonResponse({"status": 'success'})
+        elif action=='d':
+            sentence_id=request.GET.get('sentence_id')
+            Sentences.objects.filter(sentence_id=sentence_id).delete()
+            return JsonResponse({"status": 'success'})
+       
 
 def dictfetchall(cursor): 
     desc = cursor.description 

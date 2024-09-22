@@ -8,7 +8,7 @@ urlpatterns=[
     path("accounts/logout/", views.logout_user, name='logout'),
     path('word_lists/', views.show_list_word, name="word_lists_words"),
     path('', views.show_list_word, name="word_lists_words"),
-    path('ajax_add_word/', views.ajax_add_word),
+    path('ajax_word_crud/', views.ajax_word_crud),
     path('show_list_word/', views.show_list_word),
     path('ajax_crud_list/', views.ajax_crud_list),
 ]

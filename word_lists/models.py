@@ -38,7 +38,7 @@ class Sentences(models.Model):
     meaning = models.CharField(max_length=50, blank=True, null=True)
     lemma = models.CharField(max_length=50, blank=True, null=True)
     note = models.CharField(max_length=200, blank=True, null=True)
-    word_start_pos = models.IntegerField()
+    word_start_pos = models.IntegerField() #token, word, not charater
     word_end_pos = models.IntegerField()
     list = models.ForeignKey(Lists, on_delete=models.CASCADE)
     class Meta:

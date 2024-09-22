@@ -1,7 +1,7 @@
 {% extends 'sidebar.html' %}
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/style_add_word.css' %}">
+<link rel="stylesheet" href="{% static 'css/style_word_crud.css' %}">
 <script>
     $(document).ready(function(){
         $("a[id='my_vocab']").addClass("active");
@@ -10,15 +10,15 @@
     //choose list
     $(document).on('click', '.list_of_word', function(){
         list_id=$(this).attr('id')
-        $('.sentence_of_list').each(function() {
-            if($(this).attr('data-lists_id')==list_id)
+        $('.sentence_show').each(function() {
+            if($(this).data('lists_id')==list_id)
                 $(this).removeAttr("hidden");
             else
                 $(this).attr('hidden', 'hidden');
         });
     });
     $(document).on('click', '.list_of_word_all', function(){
-        $('.sentence_of_list').each(function() {
+        $('.sentence_show').each(function() {
             $(this).removeAttr("hidden");
         });
     });
@@ -73,7 +73,7 @@
                 </div>
                 <br>
                 <button type="button" class="add_list btn btn-primary btn-sm" data-toggle="modal" data-target="#addOrEditlistmodel">+ danh sách</button>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg">+ từ vựng</button>
+                <button type="button" class="btn btn-primary btn-sm" id="add_word" data-toggle="modal" data-target="#add_edit_word_model">+ từ vựng</button>
             </td>
     </div>
         <td>
@@ -81,25 +81,27 @@
         </td>
         <td>
             <ol class="list-group list-group-numbered">
-                {% for sent in sents %}
-                    <div id="{{ sent.sentence_id }}" class="sentence_of_list" data-lists_id="{{ sent.list_id }}">
+                 {% for sent in sents %}
+                    <div id="sentence_show" class="sentence_show" data-lists_id="{{ sent.list_id }}" data-sent_id="{{ sent.sentence_id }}" data-wstart="{{ sent.word_start_pos }}" data-wend="{{ sent.word_end_pos }}">
                             <li class="list-group-item d-flex justify-content-between align-items-start">
                                 <div class="ms-2 me-auto">
                                     <div style="display: flex;">
-                                        <div class="fw-bold">{{ sent.lemma }}</div>
+                                        <div id="word_lemma" class="fw-bold">{{ sent.lemma }}</div>
                                         <table class="crud" style="text-align: right;" hidden>
                                             <tr>
                                                 <td >
-                                                    <button type="button" class="btn btn-warning btn-sm"></button>
+                                                    <button type="button" class="btn btn-warning btn-sm" id="edit_word" data-toggle="modal" data-target="#add_edit_word_model"></button>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-danger btn-sm"></button>
+                                                    <button type="button" class="btn btn-danger btn-sm" id="delete_word" data-toggle="modal" data-target="#delete_word_model"></button>
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
-                                    <p style="margin: 0px 0px 0px 0px;">- {{ sent.meaning }}</p>
-                                    <p style="margin: 0px 0px 0px 20px;">- {{ sent.sentence }}</p>
+                                    <p id="word_meaning" style="margin: 0px 0px 0px 0px;">{{ sent.meaning }}</p>
+                                    <p id="sentence" style="margin: 0px 0px 0px 20px;">{{ sent.sentence }}</p>
+                                    <p id="note" style="margin: 0px 0px 0px 20px;">{{ sent.note }}</p>
+
                                 </div>
                                 <!-- <span class="badge bg-primary rounded-pill">14</span> -->
                             </li>
@@ -110,5 +112,5 @@
     </tr>
 </table>
 {% include 'list_crud.html' %}
-{% include 'add_word.html' %}
+{% include 'word_crud.html' %}
 {% endblock content %}

@@ -1,0 +1,241 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style_word_crud.css' %}">
+<script>
+    var word_tokens=[], choosed_word_tokens_pos=[]
+    function reset()
+    {
+        $('.tokens_display').remove()
+        // $('#setup_and_submit').attr('hidden', 'hidden')
+        word_tokens=[]
+        choosed_word_tokens_pos=[]
+    }
+    function print_sentence_to_choose(text)
+    {
+        reset()
+        $('#choose_words').append('<div class="tokens_display"></div>')
+        word_tokens = text.split(" "); //chua xu ly het khuc nay
+        for (let i = 0; i < word_tokens.length; i++) {
+            if(word_tokens[i]!="")
+            {
+                $('.tokens_display').append(
+                    '<p id='+i+'>'+word_tokens[i]+'&nbsp</p>')
+            }
+        }
+    }
+    function choose_unchoose_word(token_pos)
+    {
+        var index = choosed_word_tokens_pos.indexOf(token_pos);
+        if (index > -1) {
+            choosed_word_tokens_pos.splice(index, 1);
+            $('#choose_words .tokens_display p#'+token_pos).removeClass("highlight");
+        }
+        else
+        {
+            choosed_word_tokens_pos.push(token_pos);
+            $('#choose_words .tokens_display p#'+token_pos).addClass("highlight");
+            choosed_word_tokens_pos.sort(function(a, b){return a - b});
+        }
+        word_choosed='';
+        for (let i = 0; i < choosed_word_tokens_pos.length; i++) 
+            word_choosed+=word_tokens[choosed_word_tokens_pos[i]]+' '
+        console.log(word_choosed)
+        $('#word_choosed').text(word_choosed)
+    }
+    function word_crud(action, sentence_id=NaN){
+        if(action=='c') //from button in the model screen
+        {
+            $.ajax({
+                url: "/ajax_word_crud/",
+                type: 'get',
+                contentType: 'appication/json',
+                data: {
+                        'choosed_word_tokens_pos': choosed_word_tokens_pos,
+                        'sentence': $('#add_edit_word_model input#sentence').val(),
+                        'meaning': $('#add_edit_word_model input#meaning').val(),
+                        'note': $('#add_edit_word_model textarea#note').val(),
+                        'list_id': $('#add_edit_word_model select#list_choose').val(),
+                        'action': 'c'
+                },
+                success: function(response){
+                    window.location.reload();
+                }
+            })
+        }
+        else if(action=='d') //from button in the main screen
+        {
+            $.ajax({
+                    url: "/ajax_word_crud/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'sentence_id': sentence_id,
+                        'action': 'd'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+        else if(action=='u') //from button in the model screen
+        {
+            $.ajax({
+                    url: "/ajax_word_crud/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    data: {
+                        'sentence_id': sentence_id,
+                        'choosed_word_tokens_pos': choosed_word_tokens_pos,
+                        'sentence': $('#add_edit_word_model input#sentence').val(),
+                        'meaning': $('#add_edit_word_model input#meaning').val(),
+                        'note': $('#add_edit_word_model textarea#note').val(),
+                        'list_id': $('#add_edit_word_model select#list_choose').val(),
+                        'action': 'u'
+                    },
+                    success: function(response){
+                        window.location.reload();
+                    }
+                })
+        }
+    }
+    $(document).ready(function(){
+        var today = new Date();
+        var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
+        $('#time').text(date)
+
+
+        $(document).on('blur', 'input#sentence', function(){
+            $('#choose_words').removeAttr('hidden')
+            print_sentence_to_choose($(this).val())
+        });
+    
+
+        $(document).on('click', '.tokens_display>p', function(){
+            $('#setup_and_submit').removeAttr('hidden')
+            token_pos=parseInt($(this).attr('id'));
+            choose_unchoose_word(token_pos)
+        });
+
+
+        $(document).on('click', '#add_word', function(){
+            $('#add_edit_word_model #summit_button').click(function() {
+                    word_crud('c');
+                });
+            $('#add_edit_word_model #summit_button').text('Thêm')
+            $('#add_edit_word_model .modal-title').text('Thêm từ vựng')
+            $('#choose_words').attr('hidden', true);
+            $('#setup_and_submit').attr('hidden', true)
+            $('#add_edit_word_model input#sentence').val('')
+            $('#add_edit_word_model input#meaning').val('')
+            $('#add_edit_word_model textarea#note').val('')
+        });
+
+
+        $(document).on('click', '#edit_word', function(){
+            $('#add_edit_word_model #summit_button').text('Sửa')
+            $('#add_edit_word_model .modal-title').text('Sửa từ vựng')
+            $('#choose_words').removeAttr('hidden');
+            $('#setup_and_submit').removeAttr('hidden')
+
+            // Find the closest parent with the class "sentence_show"
+            var parentDiv = $(this).closest('#sentence_show');
+            // Get the texts of the relevant elements
+            var lemma = parentDiv.find('#word_lemma').text().trim();
+            var meaning = parentDiv.find('#word_meaning').text().trim();
+            var sentence = parentDiv.find('#sentence').text().trim();
+            var note = parentDiv.find('#note').text().trim();
+            var word_start_pos = parentDiv.data('wstart')
+            var word_end_pos = parentDiv.data('wend')
+            var list_id = parentDiv.data('lists_id')
+            var sentence_id = parentDiv.data('sent_id')
+
+            $('#add_edit_word_model input#sentence').val(sentence)
+            print_sentence_to_choose(sentence)
+            for (let i = word_start_pos; i <= word_end_pos; i++)
+                choose_unchoose_word(i)
+            $('#add_edit_word_model input#meaning').val(meaning)
+            $('#add_edit_word_model textarea#note').val(note)
+            $('#add_edit_word_model select#list_choose').val(list_id);
+
+            $('#add_edit_word_model #summit_button').click(function() {
+                word_crud('u', sentence_id);
+            });
+        });
+
+
+        $(document).on('click', '#delete_word', function(){
+            // Find the closest parent with the class "sentence_show"
+            var parentDiv = $(this).closest('#sentence_show');
+            // Get the texts of the relevant elements
+            var lemma = parentDiv.find('#word_lemma').text().trim();
+            var sentence = parentDiv.find('#sentence').text().trim();
+            var sentence_id = parentDiv.data('sent_id')
+            $('#delete_word_model #deleted_word').text(lemma)
+            $('#delete_word_model #deleted_sentence').text("\""+sentence+"\"")
+            $('#delete_word_model button').click(function() {
+                word_crud('d', sentence_id);
+            });
+        });
+
+    });
+</script>
+<div class="modal fade bd-example-modal-lg" id="add_edit_word_model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Thêm/Sửa từ vựng</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input id='sentence' class='form-control form-control-lg' type="text" placeholder="Nhập câu" name="sentence"><br>
+            <div id="choose_words"><p class="tittle">Chọn từ</p></div>
+            <div id="setup_and_submit">
+                <div class="word_info">
+                    <table>
+                        <tr>
+                            <td style="vertical-align: top">
+                                <div style="display: flex;">
+                                    <p class="tittle">Từ đã chọn:&nbsp;</p> 
+                                    <p id="word_choosed" class="content_text" style="color: #b9be11;"></p>
+                                </div>
+                                <input id='meaning' type="text" class="form-control" placeholder="Nghĩa">
+                            </td>
+                            <td style="vertical-align: top;">
+                                <p id="note" style="margin-left: 12px;" class="tittle">Ghi chú</p>
+                                <textarea style="margin-left: 12px;" id="note" class='text-area' cols="30" rows="10"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br>
+                <select id="list_choose">
+                    {% for list in lists %}
+                    <option value={{ list.list_id }}>{{ list.listname }}</option>
+                    {% endfor %}
+                </select>
+                <button id="summit_button" class="e-button">Thêm/Sửa</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="delete_word_model" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Xoá từ</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Xoá <strong id="deleted_word"></strong> trong:</p>
+            <p id="deleted_sentence"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger">Xóa</button>
+        </div>
+        </div>
+    </div>
+</div>
