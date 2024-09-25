@@ -79,12 +79,13 @@
                 <br>
                 <button type="button" class="add_list btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrEditlistmodel">+ danh sách</button>
                 <button type="button" class="btn btn-primary btn-sm" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">+ từ vựng</button>
+                <button type="button" class="btn-grad:hover btn-grad" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">Học</button>
             </td>
     </div>
         <td>
             <div style="width: 10px;"></div>
         </td>
-        <td>
+        <td style="min-width: 800px; vertical-align: top;">
             <ol id="sentence_group" class="list-group list-group-numbered">
                  {% for sent in sents %}
                     <div id="sentence_show" class="sentence_show" data-lists_id="{{ sent.list_id }}" data-sent_id="{{ sent.sentence_id }}" data-wstart="{{ sent.word_start_pos }}" data-wend="{{ sent.word_end_pos }}">
