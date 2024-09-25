@@ -57,7 +57,8 @@
                         'action': 'c'
                 },
                 success: function(response){
-                    window.location.reload();
+                    $('#sentence_group').load(document.URL +  ' #sentence_group');
+                    $('#add_edit_word_model').modal('hide');
                 }
             })
         }
@@ -72,7 +73,8 @@
                         'action': 'd'
                     },
                     success: function(response){
-                        window.location.reload();
+                        $('#sentence_group').load(document.URL +  ' #sentence_group');
+                        $('#delete_word_model').modal('hide');
                     }
                 })
         }
@@ -92,7 +94,8 @@
                         'action': 'u'
                     },
                     success: function(response){
-                        window.location.reload();
+                        $('#sentence_group').load(document.URL +  ' #sentence_group');
+                        $('#add_edit_word_model').modal('hide');                    
                     }
                 })
         }
@@ -117,6 +120,7 @@
 
 
         $(document).on('click', '#add_word', function(){
+            $('#add_edit_word_model #summit_button').off('click');
             $('#add_edit_word_model #summit_button').click(function() {
                     word_crud('c');
                 });
@@ -156,6 +160,7 @@
             $('#add_edit_word_model textarea#note').val(note)
             $('#add_edit_word_model select#list_choose').val(list_id);
 
+            $('#add_edit_word_model #summit_button').off('click');
             $('#add_edit_word_model #summit_button').click(function() {
                 word_crud('u', sentence_id);
             });
@@ -183,8 +188,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Thêm/Sửa từ vựng</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
@@ -225,8 +229,7 @@
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Xoá từ</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
