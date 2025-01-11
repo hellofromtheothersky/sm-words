@@ -1,0 +1,92 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/learn.css' %}">
+<script>
+    
+    const get_sequence = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    function highlight_words(text, positions) {
+        // Split the text into words
+        const words = text.split(' ');
+        highlight_part=[]
+        // Create a new array to hold the transformed words
+        const visual_sentence = words.map((word, index) => {
+            if (positions.includes(index)) {
+                highlight_part.push(word)
+            }
+            else{
+                if (highlight_part.length>0){
+                    hidden_tokens=`<span class="hidden_tokens">${highlight_part.join(" ")}
+                                    </span> ${word}`;
+                    highlight_part=[]
+                    return hidden_tokens
+                }
+                else
+                    return word;
+            }
+        });
+
+        // Join the words back into a single string and wrap in a <p> tag
+        return `<p>${visual_sentence.join(' ')}</p>`;
+    }
+
+    $(document).on('click', '#learn_model #submit', function(){
+        $('#learn_model input').each(function() {
+        var value = $(this).val(); // Get the value of the input
+        var result = $('<p></p>').text("You typed: "+value); // Create a new span with the input value
+        $(this).parentsUntil("li").append(result)
+        $(this).remove(); // Remove the old input
+        
+    });
+    });
+    $(document).on('click', '#learn', function(){
+        $.ajax({
+                    url: "/ajax_get_questions/",
+                    type: 'get',
+                    contentType: 'appication/json',
+                    // data: {
+                    //     'list_id': list_id,
+                    //     'listname': list_new_name,
+                    //     'action': 'u'
+                    // },
+                    success: function(response){
+                        console.log(response)
+                        $("#learn_model #question_set").empty();
+
+                        response.questions.forEach((question, index) => {
+                            const questionParagraph = $("<li></li>").addClass("list-group-item").attr("id", index);
+
+                            const highlightedQuestion = highlight_words(
+                                question.question,
+                                get_sequence(question.answer_start_pos, question.answer_end_pos)
+                            );
+                            
+                            questionParagraph
+                                .addClass("question")
+                                .html(highlightedQuestion);
+
+                            $("#learn_model #question_set").append(questionParagraph);
+                        });
+                        $("#learn_model #question_set .hidden_tokens").append(
+                                `<input class="answer" type="text" style="width:150px;">`)
+                    }
+                })
+    });
+</script>
+<div class="modal fade bd-example-modal-lg" id="learn_model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-fullscreen">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Học</h5>
+            <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <div class="modal-body">
+            <ol id="question_set" class="list-group list-group-numbered"></ol>
+                <!-- <li class="list-group-item">Cras justo odio</li> -->
+            </ol>
+        </div>
+        <div class="modal-footer">
+            <button id="submit" type="button" class="btn btn-primary btn-lg">Xong</button>
+        </div>
+    </div>
+  </div>
+</div>

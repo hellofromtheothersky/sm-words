@@ -79,7 +79,7 @@
                 <br>
                 <button type="button" class="add_list btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrEditlistmodel">+ danh sách</button>
                 <button type="button" class="btn btn-primary btn-sm" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">+ từ vựng</button>
-                <button type="button" class="btn-grad:hover btn-grad" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">Học</button>
+                <button type="button" class="btn-grad:hover btn-grad" id="learn" data-bs-toggle="modal" data-bs-target="#learn_model">Học</button>
             </td>
     </div>
         <td>
@@ -119,4 +119,5 @@
 </table>
 {% include 'list_crud.html' %}
 {% include 'word_crud.html' %}
+{% include 'learn.html' %}
 {% endblock content %}

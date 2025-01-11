@@ -1,0 +1,10 @@
+.question{
+    font-size: 25px;
+}
+.hidden_tokens{
+    background-color: yellow;
+}
+input.flex_size{ 
+    font-size:1.3em; 
+    padding:.5em; 
+}
