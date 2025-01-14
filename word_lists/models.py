@@ -41,7 +41,7 @@ class Sentences(models.Model):
     word_start_pos = models.IntegerField() #token, word, not charater
     word_end_pos = models.IntegerField()
     list = models.ForeignKey(Lists, on_delete=models.CASCADE)
-    appear_times=models.IntegerField(null=True)
-    fail_times=models.IntegerField(null=True)
+    appear_times=models.IntegerField(default=0, null=False)
+    fail_times=models.IntegerField(default=0, null=False)
     class Meta:
         db_table = "sentences"

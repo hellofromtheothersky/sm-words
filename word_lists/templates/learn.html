@@ -1,7 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/learn.css' %}">
 <script>
-    
+    let question_data;
     const get_sequence = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
     function highlight_words(text, positions) {
         // Split the text into words
@@ -28,15 +28,43 @@
         return `<p>${visual_sentence.join(' ')}</p>`;
     }
 
-    $(document).on('click', '#learn_model #submit', function(){
-        $('#learn_model input').each(function() {
-        var value = $(this).val(); // Get the value of the input
-        var result = $('<p></p>').text("You typed: "+value); // Create a new span with the input value
-        $(this).parentsUntil("li").append(result)
-        $(this).remove(); // Remove the old input
+    $(document).on('click', '#learn_model #submit', function() {
+        console.log(question_data);
+
+        let correct = [];
+        let question_ids = [];
+
+        question_data.forEach((question) => {
+            let value = $('#question_set li#' + question.sentence_id + ' input').val(); // Get the value of the input
+            $('#question_set li#' + question.sentence_id + ' .hidden_tokens').text(question.lemma); // Display the lemma in the specified element
+
+            let result = $('<p></p>').text("Đã điền: " + value); // Create a new paragraph with the input value
+
+            if (value !== question.lemma) {
+                result.text(result.text() + ' ❌');
+                correct.push(false);
+            } else {
+                result.text(result.text() + ' ✅');
+                correct.push(true);
+            }
+
+            question_ids.push(question.sentence_id);
+
+            $('#question_set li#' + question.sentence_id).append(result); // Append the result paragraph to the list item
+            $('#question_set li#' + question.sentence_id + ' input').remove(); // Remove the old input
+        });
+
+        $.ajax({
+            url: "/ajax_send_result/",
+            type: 'get',
+            contentType: 'application/json',
+            data: {
+                'correct': correct,
+                'question_id': question_ids
+            },
+        });
+    });
         
-    });
-    });
     $(document).on('click', '#learn', function(){
         $.ajax({
                     url: "/ajax_get_questions/",
@@ -48,11 +76,10 @@
                     //     'action': 'u'
                     // },
                     success: function(response){
-                        console.log(response)
                         $("#learn_model #question_set").empty();
-
-                        response.questions.forEach((question, index) => {
-                            const questionParagraph = $("<li></li>").addClass("list-group-item").attr("id", index);
+                        question_data=response.questions
+                        question_data.forEach((question, index) => {
+                            const questionParagraph = $("<li></li>").addClass("list-group-item").attr("id", question.sentence_id);
 
                             const highlightedQuestion = highlight_words(
                                 question.question,

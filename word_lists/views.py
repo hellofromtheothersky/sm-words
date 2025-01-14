@@ -140,7 +140,8 @@ def ajax_get_questions(request):
             """select * from sentences s  where s.list_id in 
                     (
                         select list_id from lists l where l.user_id=%s
-                    ) limit 3
+                    ) ORDER BY appear_times, fail_times, RANDOM() 
+                    limit 3
                   """,
             [cur_user],
         )
@@ -159,3 +160,21 @@ def ajax_get_questions(request):
         rows[i]["answer_end_pos"] = row["word_start_pos"] + len(row["meaning"].split()) - 1
 
     return JsonResponse({"questions": rows})
+
+
+@login_required
+def ajax_send_result(request):
+    if request.method == "GET":
+        print(request.GET)
+        correct = request.GET.getlist("correct[]")
+        question_id= request.GET.getlist("question_id[]")
+
+        with connection.cursor() as c:
+            c.execute(
+                f"""update sentences set appear_times=appear_times+1 where sentence_id in ({', '.join(question_id)})"""
+            )
+            c.execute(
+                f"""update sentences set fail_times=fail_times+1 where sentence_id in ({', '.join([x for i, x in enumerate(question_id) if correct[i]=='false'])})"""
+            )
+
+        return JsonResponse({"status": "success"})

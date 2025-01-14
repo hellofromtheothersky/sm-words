@@ -12,4 +12,5 @@ urlpatterns=[
     path('show_list_word/', views.show_list_word),
     path('ajax_crud_list/', views.ajax_crud_list),
     path('ajax_get_questions/', views.ajax_get_questions),
+    path('ajax_send_result/', views.ajax_send_result),
 ]

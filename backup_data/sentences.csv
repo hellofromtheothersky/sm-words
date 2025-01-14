@@ -1,7 +1,6 @@
 sentence_id,sentence,meaning,lemma,note,word_start_pos,word_end_pos,list_id,appear_times,fail_times
-31,it's a fallacy to suppose that wealth brings happiness,"điều lầm tưởng, lý luận sai",fallacy,,2,2,36,,
-32,there is a considerable discrepancy between the two versions of the affair,sự không nhất quán,discrepancy,,4,4,36,,
-33,I have been relegated to the role of a mere assitant,"đẩy xuống, điều xuống",relegated,,3,3,36,,
-34,you're too superficial to appreciate great literature like this,nông cạn,superficial,,2,2,36,,
-35,he performed many daring exploits such as crossing the Atlantic Ocean in a rowing boat,"kỳ công, kỳ tích",exploits,,4,4,36,,
-36,"the government subsidizes basic goods including sugar, petroleum, and wheat",trợ cấp,subsidizes,,2,2,37,,
+31,it's a fallacy to suppose that wealth brings happiness,"điều lầm tưởng, lý luận sai",fallacy,,2,2,36,0,0
+32,there is a considerable discrepancy between the two versions of the affair,sự không nhất quán,discrepancy,,4,4,36,0,0
+33,I have been relegated to the role of a mere assitant,"đẩy xuống, điều xuống",relegated,,3,3,36,0,0
+34,you're too superficial to appreciate great literature like this,nông cạn,superficial,,2,2,36,0,0
+36,"the government subsidizes basic goods including sugar, petroleum, and wheat",trợ cấp,subsidizes,,2,2,37,0,0
