@@ -29,7 +29,26 @@
         return `<p>${visual_sentence.join(' ')}</p>`;
     }
 
-    $(document).on('click', '#learn_mode #submit', function() {
+    function switch_learn_mode(){
+        $('div#list_word_mode').attr('hidden', 'hidden');
+        $('div#learn_mode').removeAttr("hidden");
+
+        // Disable all buttons
+        $('td#control button').attr("disabled", "disabled").off('click');
+        $('td#control button#learn').attr('hidden', 'hidden');
+
+        $('div#learn_mode #question_set').addClass('fade-in');
+        $('div#learn_mode button').addClass('fade-in');
+
+
+        $('div#learn_mode button').addClass('fade-in');
+
+        $('#learn_mode #submit').click(function() {
+            show_result();
+        });
+    }
+
+    function show_result(){
         $('.loading-bar').attr('hidden', 'hidden');
 
         let correct = [];
@@ -68,27 +87,19 @@
                 'question_id': question_ids
             },
         });
-    });
+
+        $('#learn_mode #submit').click(function() {
+            location.reload();
+        });
+    }
+
      $(document).on('click', 'button#learn', function(){
-        $('div#list_word_mode').attr('hidden', 'hidden');
-        $('div#learn_mode').removeAttr("hidden");
-
-        // Disable all buttons
-        $('td#control button').attr("disabled", "disabled").off('click');
-        $('td#control button#learn').addClass('fade-out');
-
-        $('div#learn_mode #question_set').addClass('fade-in');
-        $('div#learn_mode button').addClass('fade-in');
+        switch_learn_mode()
 
         $.ajax({
                     url: "/ajax_get_questions/",
                     type: 'get',
                     contentType: 'appication/json',
-                    // data: {
-                    //     'list_id': list_id,
-                    //     'listname': list_new_name,
-                    //     'action': 'u'
-                    // },
                     success: function(response){
                         $("#learn_mode #question_set").empty();
                         question_data=response.questions
