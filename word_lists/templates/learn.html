@@ -1,5 +1,6 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/learn.css' %}">
+
 <script>
     let question_data;
     const get_sequence = (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -28,8 +29,8 @@
         return `<p>${visual_sentence.join(' ')}</p>`;
     }
 
-    $(document).on('click', '#learn_model #submit', function() {
-        console.log(question_data);
+    $(document).on('click', '#learn_mode #submit', function() {
+        $('.loading-bar').attr('hidden', 'hidden');
 
         let correct = [];
         let question_ids = [];
@@ -38,13 +39,13 @@
             let value = $('#question_set li#' + question.sentence_id + ' input').val(); // Get the value of the input
             $('#question_set li#' + question.sentence_id + ' .hidden_tokens').text(question.lemma); // Display the lemma in the specified element
 
-            let result = $('<p></p>').text("Đã điền: " + value); // Create a new paragraph with the input value
+            let result = $('<p></p>').text(value); // Create a new paragraph with the input value
 
             if (value !== question.lemma) {
-                result.text(result.text() + ' ❌');
+                result.text('❌: '+result.text());
                 correct.push(false);
             } else {
-                result.text(result.text() + ' ✅');
+                result.text('✅: '+result.text());
                 correct.push(true);
             }
 
@@ -52,6 +53,10 @@
 
             $('#question_set li#' + question.sentence_id).append(result); // Append the result paragraph to the list item
             $('#question_set li#' + question.sentence_id + ' input').remove(); // Remove the old input
+
+            if (correct.includes(false)) $('.loading-bar_fail').removeAttr("hidden");
+            else $('.loading-bar_success').removeAttr("hidden");
+
         });
 
         $.ajax({
@@ -64,8 +69,17 @@
             },
         });
     });
-        
-    $(document).on('click', '#learn', function(){
+     $(document).on('click', 'button#learn', function(){
+        $('div#list_word_mode').attr('hidden', 'hidden');
+        $('div#learn_mode').removeAttr("hidden");
+
+        // Disable all buttons
+        $('td#control button').attr("disabled", "disabled").off('click');
+        $('td#control button#learn').addClass('fade-out');
+
+        $('div#learn_mode #question_set').addClass('fade-in');
+        $('div#learn_mode button').addClass('fade-in');
+
         $.ajax({
                     url: "/ajax_get_questions/",
                     type: 'get',
@@ -76,7 +90,7 @@
                     //     'action': 'u'
                     // },
                     success: function(response){
-                        $("#learn_model #question_set").empty();
+                        $("#learn_mode #question_set").empty();
                         question_data=response.questions
                         question_data.forEach((question, index) => {
                             const questionParagraph = $("<li></li>").addClass("list-group-item").attr("id", question.sentence_id);
@@ -90,30 +104,31 @@
                                 .addClass("question")
                                 .html(highlightedQuestion);
 
-                            $("#learn_model #question_set").append(questionParagraph);
+                            $("#learn_mode #question_set").append(questionParagraph);
                         });
-                        $("#learn_model #question_set .hidden_tokens").append(
+                        $("#learn_mode #question_set .hidden_tokens").append(
                                 `<input class="answer" type="text" style="width:150px;">`)
                     }
                 })
     });
 </script>
-<div class="modal fade bd-example-modal-lg" id="learn_model" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-fullscreen">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Học</h5>
-            <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
-            </button>
-        </div>
-        <div class="modal-body">
-            <ol id="question_set" class="list-group list-group-numbered"></ol>
-                <!-- <li class="list-group-item">Cras justo odio</li> -->
-            </ol>
-        </div>
-        <div class="modal-footer">
-            <button id="submit" type="button" class="btn btn-primary btn-lg">Xong</button>
-        </div>
+
+
+
+
+<div id="learn_mode" hidden>
+    <div class="loading-bar">
+        <div class="progress"></div>
     </div>
-  </div>
+    <div class="loading-bar_success" hidden>
+        <div class="progress-bar_success"></div>
+    </div>
+    <div class="loading-bar_fail" hidden>
+        <div class="progress-bar_fail"></div>
+    </div>
+    <ol id="question_set" class="list-group list-group-numbered"></ol>
+        <!-- <li class="list-group-item">Cras justo odio</li> -->
+    </ol>
+    <br>
+    <button id="submit" type="button" class="btn btn-primary btn-lg">Xong</button>
 </div>

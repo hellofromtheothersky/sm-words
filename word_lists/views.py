@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Lists, Sentences, User
+from .models import Lists, Sentences, User, Settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -91,6 +91,10 @@ def dictfetchall(cursor):
 
 @login_required
 def show_list_word(request):
+    if not Settings.objects.exists():
+        new_instance = Settings(num_questions=3)
+        new_instance.save()
+
     cur_user = request.user.id
 
     with connection.cursor() as c:
@@ -107,7 +111,8 @@ def show_list_word(request):
     return render(
         request,
         "show_list_word.html",
-        {"lists": Lists.objects.filter(user_id=cur_user), "sents": rows},
+        {"lists": Lists.objects.filter(user_id=cur_user), "sents": rows
+},
     )
 
 
@@ -137,13 +142,12 @@ def ajax_get_questions(request):
 
     with connection.cursor() as c:
         c.execute(
-            """select * from sentences s  where s.list_id in 
+            f"""select * from sentences s  where s.list_id in 
                     (
-                        select list_id from lists l where l.user_id=%s
+                        select list_id from lists l where l.user_id={cur_user}
                     ) ORDER BY appear_times, fail_times, RANDOM() 
-                    limit 3
-                  """,
-            [cur_user],
+                    limit {Settings.objects.values().first()['num_questions']}
+                  """
         )
         rows = dictfetchall(c)
 
@@ -165,7 +169,6 @@ def ajax_get_questions(request):
 @login_required
 def ajax_send_result(request):
     if request.method == "GET":
-        print(request.GET)
         correct = request.GET.getlist("correct[]")
         question_id= request.GET.getlist("question_id[]")
 
@@ -178,3 +181,17 @@ def ajax_send_result(request):
             )
 
         return JsonResponse({"status": "success"})
+
+
+@login_required
+def ajax_crud_setting(request):
+    if request.method == "GET":
+        action = request.GET.get("action")
+        if action == "s":
+            print(Settings.objects.values().first()['num_questions'])
+            return JsonResponse({"num_questions": Settings.objects.values().first()['num_questions']})
+        elif action == 'u':
+            Settings.objects.update(num_questions=request.GET.get("num_questions"))
+            return JsonResponse({"status": "success"})
+
+

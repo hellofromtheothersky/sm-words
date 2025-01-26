@@ -1,0 +1,61 @@
+<!-- Modal -->
+<script>
+    function learn_crud(action){
+        num_questions=$('#choose_num_ques').val()
+        $.ajax({
+                url: "/ajax_crud_setting/",
+                type: 'get',
+                contentType: 'appication/json',
+                data: {
+                    'action': 'u',
+                    'num_questions': num_questions,
+                },
+                success: function(response){
+                    $('#addOrEditlearnmodel').modal('hide');
+                }
+            })
+    }
+    $(document).on('click', '.edit_learn', function(){
+        $('#addOrEditlearnmodel button').click(function() {
+                learn_crud();
+        });
+        
+        $.ajax({
+                url: "/ajax_crud_setting/",
+                type: 'get',
+                contentType: 'appication/json',
+                data: {
+                    'action': 's',
+                },
+                success: function(response){
+                    console.log(response.num_questions)
+                    $('#choose_num_ques').val(response.num_questions);
+                }
+            })
+        });
+</script>
+<div class="modal fade" id="addOrEditlearnmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Tuỳ chỉnh câu hỏi</h5>
+            <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <div class="modal-body">
+            <label for="choose_num_ques">Số câu hỏi:</label>
+            <select class="form-control" id="choose_num_ques" style="width: 20%; height: 60%;">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-warning">Sửa</button>
+        </div>
+        </div>
+    </div>
+</div>

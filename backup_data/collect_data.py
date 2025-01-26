@@ -40,15 +40,15 @@ def main():
     # Connect to the SQLite database
     connection = sqlite3.connect('db.sqlite3')
     
-    # Export data from 'sentences' table
-    export_table_to_csv(connection, 'sentences', 'backup_data/sentences.csv')
+    # # Export data from 'sentences' table
+    # export_table_to_csv(connection, 'sentences', 'backup_data/sentences.csv')
     
-    # Export data from 'lists' table
-    export_table_to_csv(connection, 'lists', 'backup_data/lists.csv')
+    # # Export data from 'lists' table
+    # export_table_to_csv(connection, 'lists', 'backup_data/lists.csv')
     
-    # # Insert data from CSV back into the table
-    # insert_data_from_csv(connection, 'sentences', 'backup_data/sentences.csv')
-    # insert_data_from_csv(connection, 'lists', 'backup_data/lists.csv')
+    # Insert data from CSV back into the table
+    insert_data_from_csv(connection, 'sentences', 'backup_data/sentences.csv')
+    insert_data_from_csv(connection, 'lists', 'backup_data/lists.csv')
     
     # Close the database connection
     connection.close()

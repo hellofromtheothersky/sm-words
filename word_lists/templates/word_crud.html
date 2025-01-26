@@ -176,8 +176,8 @@
             var sentence_id = parentDiv.data('sent_id')
             $('#delete_word_model #deleted_word').text(lemma)
             $('#delete_word_model #deleted_sentence').text("\""+sentence+"\"")
-            $('#delete_word_model button').off('click');
-            $('#delete_word_model button').click(function() {
+            $('#add_edit_word_model #summit_button').off('click');
+            $('#add_edit_word_model #summit_button').click(function() {
                 word_crud('d', sentence_id);
             });
         });

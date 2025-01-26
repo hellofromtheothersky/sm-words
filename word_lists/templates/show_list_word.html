@@ -54,7 +54,7 @@
 <table>
     <tr>
         <div style="overflow-y: scroll">
-            <td style="width: 250px; vertical-align: top;">
+            <td id="control" style="width: 250px; vertical-align: top;">
                 <div id="list_word_group" class="list-group">
                     <a href="#" class="list_of_word_all list-group-item list-group-item-action list-group-item-dark">Tất cả</a>
                     {% for list in lists %}
@@ -79,14 +79,18 @@
                 <br>
                 <button type="button" class="add_list btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrEditlistmodel">+ danh sách</button>
                 <button type="button" class="btn btn-primary btn-sm" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">+ từ vựng</button>
-                <button type="button" class="btn-grad:hover btn-grad" id="learn" data-bs-toggle="modal" data-bs-target="#learn_model">Học</button>
+                <div class="learn-container">
+                    <button type="button" class="btn-grad:hover btn-grad" id="learn">Học</button>
+                    <button type="button" class="btn btn-warning btn-sm crud overlay-button edit_learn" id="edit_learn" data-bs-toggle="modal" data-bs-target="#addOrEditlearnmodel" hidden></button>
+                </div>
             </td>
     </div>
         <td>
             <div style="width: 10px;"></div>
         </td>
-        <td style="min-width: 800px; vertical-align: top;">
-            <ol id="sentence_group" class="list-group list-group-numbered">
+        <td id="content" style="min-width: 800px; vertical-align: top;">
+            <div id="list_word_mode">
+                <ol id="sentence_group" class="list-group list-group-numbered">
                  {% for sent in sents %}
                     <div id="sentence_show" class="sentence_show" data-lists_id="{{ sent.list_id }}" data-sent_id="{{ sent.sentence_id }}" data-wstart="{{ sent.word_start_pos }}" data-wend="{{ sent.word_end_pos }}">
                             <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -111,13 +115,15 @@
                                 </div>
                                 <!-- <span class="badge bg-primary rounded-pill">14</span> -->
                             </li>
-                    </div>
-                {% endfor %}    
-             </ol>
+                        </div>
+                    {% endfor %}    
+                </ol>
+            </div>
+            {% include 'learn.html' %}
         </td>
     </tr>
 </table>
 {% include 'list_crud.html' %}
 {% include 'word_crud.html' %}
-{% include 'learn.html' %}
+{% include 'learn_crud.html' %}
 {% endblock content %}

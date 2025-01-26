@@ -45,3 +45,9 @@ class Sentences(models.Model):
     fail_times=models.IntegerField(default=0, null=False)
     class Meta:
         db_table = "sentences"
+
+
+class Settings(models.Model):
+    num_questions = models.IntegerField()
+    class Meta:
+        db_table = "settings"

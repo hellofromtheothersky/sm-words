@@ -80,11 +80,30 @@ main {
   border-radius: 25px;
   display: block;
   border: 0px;
-  border-color: ;
+  cursor: pointer;
+  position: relative; /* Ensure relative positioning for absolute child */
 }
 
 .btn-grad:hover {
   background-position: right center; /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
+}
+
+.learn-container {
+        position: relative;
+        display: inline-block;
+}
+    
+.overlay-button {
+    position: absolute;
+    bottom: 0;
+    left: 50%; 
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    /* background-color: #e74c3c; */
+    /* color: #fff; */
+    border: none; 
+    cursor: pointer;
+    z-index: 2; /* Ensure a higher z-index than the main button */
 }
