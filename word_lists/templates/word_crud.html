@@ -168,6 +168,7 @@
 
 
         $(document).on('click', '#delete_word', function(){
+            console.log('delete_word')
             // Find the closest parent with the class "sentence_show"
             var parentDiv = $(this).closest('#sentence_show');
             // Get the texts of the relevant elements
@@ -176,8 +177,9 @@
             var sentence_id = parentDiv.data('sent_id')
             $('#delete_word_model #deleted_word').text(lemma)
             $('#delete_word_model #deleted_sentence').text("\""+sentence+"\"")
-            $('#add_edit_word_model #summit_button').off('click');
-            $('#add_edit_word_model #summit_button').click(function() {
+            $('#delete_word_model #summit_button').off('click');
+            $('#delete_word_model #summit_button').click(function() {
+                console.log('delete_word')
                 word_crud('d', sentence_id);
             });
         });
@@ -238,7 +240,7 @@
             <p id="deleted_sentence"></p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-danger">Xóa</button>
+            <button id="summit_button" type="button" class="btn btn-danger">Xóa</button>
         </div>
         </div>
     </div>
