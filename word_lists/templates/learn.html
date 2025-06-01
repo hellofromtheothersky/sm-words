@@ -50,6 +50,7 @@
 
     function show_result(){
         $('.loading-bar').attr('hidden', 'hidden');
+        $('#selected_list_name').text("Kết quả")
 
         let correct = [];
         let question_ids = [];
@@ -95,6 +96,7 @@
 
      $(document).on('click', 'button#learn', function(){
         switch_learn_mode()
+        $('#selected_list_name').text("Kiểm tra")
 
         $.ajax({
                     url: "/ajax_get_questions/",

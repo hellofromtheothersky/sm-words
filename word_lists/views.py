@@ -99,11 +99,9 @@ def show_list_word(request):
 
     with connection.cursor() as c:
         c.execute(
-            """select * from sentences s  where s.list_id in 
-                    (
-                        select list_id from lists l where l.user_id=%s
-                    )
-                  """,
+            """select s.*, l.listname as list_name 
+                from sentences s inner join lists l on s.list_id = l.list_id where l.user_id=%s
+            """,
             [cur_user],
         )
         rows = dictfetchall(c)
@@ -157,7 +155,7 @@ def ajax_get_questions(request):
             " ".join(tokens[: row["word_start_pos"]])
             + " "
             + row["meaning"]
-            + " "
+            + " "   
             + " ".join(tokens[row["word_end_pos"] + 1 :])
         )
         rows[i]["answer_start_pos"] = row["word_start_pos"]

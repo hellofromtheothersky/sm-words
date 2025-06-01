@@ -1,6 +1,21 @@
 sentence_id,sentence,meaning,lemma,note,word_start_pos,word_end_pos,list_id,appear_times,fail_times
-31,it's a fallacy to suppose that wealth brings happiness,"điều lầm tưởng, lý luận sai",fallacy,,2,2,36,0,0
-32,there is a considerable discrepancy between the two versions of the affair,sự không nhất quán,discrepancy,,4,4,36,0,0
-33,I have been relegated to the role of a mere assitant,"đẩy xuống, điều xuống",relegated,,3,3,36,0,0
-34,you're too superficial to appreciate great literature like this,nông cạn,superficial,,2,2,36,0,0
-36,"the government subsidizes basic goods including sugar, petroleum, and wheat",trợ cấp,subsidizes,,2,2,37,0,0
+100,Anthropogenic emissions are the leading cause of global warming.,do con người gây ra,anthropogenic,,0,13,1,0,0
+101,Bioremediation uses microorganisms to clean up polluted environments.,xử lý sinh học,bioremediation,,0,14,1,0,0
+102,Ecotoxicology studies the effects of toxic chemicals on the environment.,độc học sinh thái,ecotoxicology,,0,13,1,0,0
+103,Desertification is expanding in many arid regions due to overgrazing.,sa mạc hóa,desertification,,0,15,1,0,0
+104,Eutrophication of lakes leads to excessive algae growth.,phú dưỡng hóa,eutrophication,,0,14,1,0,0
+105,Carbon sequestration is a method to reduce the amount of CO₂ in the atmosphere.,lưu giữ carbon,carbon sequestration,,0,20,1,0,0
+106,Photovoltaic panels are used to convert sunlight into electricity.,quang điện,photovoltaic,,0,12,1,0,0
+107,Some companies engage in greenwashing to appear environmentally friendly.,ngụy xanh,greenwashing,,25,37,1,0,0
+108,Climatology involves the study of climate patterns over time.,khí hậu học,climatology,,0,11,1,0,0
+109,Hydrology is crucial for understanding water distribution and movement.,thủy văn học,hydrology,,0,9,1,0,0
+1,Altruism is often seen as a noble human trait.,lòng vị tha,altruism,,0,8,2,0,0
+2,An egocentric person rarely considers the feelings of others.,tự cho mình là trung tâm,egocentric,,3,13,2,0,0
+3,She is known for being empathetic toward those in distress.,có lòng thấu cảm,empathetic,,23,33,2,0,0
+4,He remained stoic even in the face of great adversity.,"kiên cường, không thể hiện cảm xúc",stoic,,12,17,2,0,0
+5,Many voters are cynical about politicians’ promises.,hoài nghi,cynical,,16,23,2,0,0
+6,The leader was charismatic and inspired a large following.,có sức hút,charismatic,,15,26,2,0,0
+7,Introverted individuals may prefer quiet environments.,hướng nội,introverted,,0,11,2,0,0
+8,He is a gregarious person who enjoys being around others.,thích giao du,gregarious,,8,18,2,0,0
+9,Humility is considered a valuable trait in many cultures.,sự khiêm tốn,humility,,0,8,2,0,0
+10,She felt resentful after being overlooked for the promotion.,"bực bội, phẫn uất",resentful,,9,18,2,0,0
