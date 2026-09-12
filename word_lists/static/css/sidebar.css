@@ -1,3 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+#word_lemma,
+#sentence,
+#word_meaning,
+#note,
+.tokens_display,
+.question,
+.hidden_tokens,
+#question_set .text-danger,
+#question_set .text-success {
+  font-family: 'Lora', serif;
+}
+
 body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
@@ -56,6 +70,7 @@ main {
 
 .scrollarea {
   overflow-y: auto;
+  padding: 0 24px;
 }
 
 .btn-primary {

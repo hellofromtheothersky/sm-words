@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as User_dj
 from django.db import connection
+from django.db.models import Count
 
 # Create your views here.
 
@@ -22,7 +23,7 @@ def login_user(request):
             return redirect("word_lists_words")
         else:
             print("alffffo")
-            messages.success(request, ("Không hợp lệ, hãy thử lại..."))
+            messages.success(request, ("Invalid credentials, please try again..."))
             return redirect("login")  # name of a view, not the fuction name
 
     return render(request, "registration/login.html")
@@ -99,18 +100,37 @@ def show_list_word(request):
 
     with connection.cursor() as c:
         c.execute(
-            """select s.*, l.listname as list_name 
+            """select s.*, l.listname as list_name
                 from sentences s inner join lists l on s.list_id = l.list_id where l.user_id=%s
             """,
             [cur_user],
         )
         rows = dictfetchall(c)
 
+    word_groups = []
+    groups_by_key = {}
+    for row in rows:
+        key = (row["list_id"], row["lemma"].strip().lower())
+        group = groups_by_key.get(key)
+        if group is None:
+            group = {
+                "list_id": row["list_id"],
+                "list_name": row["list_name"],
+                "lemma": row["lemma"],
+                "examples": [],
+            }
+            groups_by_key[key] = group
+            word_groups.append(group)
+        group["examples"].append(row)
+
     return render(
         request,
         "show_list_word.html",
-        {"lists": Lists.objects.filter(user_id=cur_user), "sents": rows
-},
+        {
+            "lists": Lists.objects.filter(user_id=cur_user).annotate(word_count=Count("sentences")),
+            "sents": rows,
+            "word_groups": word_groups,
+        },
     )
 
 
@@ -137,29 +157,41 @@ def ajax_crud_list(request):
 @login_required
 def ajax_get_questions(request):
     cur_user = request.user.id
+    list_id = request.GET.get("list_id")
+    num_questions = Settings.objects.values().first()["num_questions"]
 
     with connection.cursor() as c:
-        c.execute(
-            f"""select * from sentences s  where s.list_id in 
-                    (
-                        select list_id from lists l where l.user_id={cur_user}
-                    ) ORDER BY appear_times, fail_times, RANDOM() 
-                    limit {Settings.objects.values().first()['num_questions']}
-                  """
-        )
+        if list_id:
+            c.execute(
+                """select * from sentences s where s.list_id = %s and s.list_id in
+                        (
+                            select list_id from lists l where l.user_id=%s
+                        ) ORDER BY appear_times, fail_times, RANDOM()
+                        limit %s
+                      """,
+                [list_id, cur_user, num_questions],
+            )
+        else:
+            c.execute(
+                """select * from sentences s where s.list_id in
+                        (
+                            select list_id from lists l where l.user_id=%s
+                        ) ORDER BY appear_times, fail_times, RANDOM()
+                        limit %s
+                      """,
+                [cur_user, num_questions],
+            )
         rows = dictfetchall(c)
 
     for i, row in enumerate(rows):
-        tokens = row["sentence"].split()
-        rows[i]["question"] = (
-            " ".join(tokens[: row["word_start_pos"]])
-            + " "
-            + row["meaning"]
-            + " "   
-            + " ".join(tokens[row["word_end_pos"] + 1 :])
-        )
-        rows[i]["answer_start_pos"] = row["word_start_pos"]
-        rows[i]["answer_end_pos"] = row["word_start_pos"] + len(row["meaning"].split()) - 1
+        tokens = row["sentence"].split(" ")
+        meaning_tokens = row["meaning"].split(" ")
+        start = row["word_start_pos"]
+        end = row["word_end_pos"]
+        question_tokens = tokens[:start] + meaning_tokens + tokens[end + 1 :]
+        rows[i]["question"] = " ".join(question_tokens)
+        rows[i]["answer_start_pos"] = start
+        rows[i]["answer_end_pos"] = start + len(meaning_tokens) - 1
 
     return JsonResponse({"questions": rows})
 

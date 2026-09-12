@@ -131,7 +131,7 @@
             <input name="password" type="password" placeholder="password"/>
             <input name="register" type="text" value="register" hidden>
             <button>create</button>
-            <p class="message">Đã đăng ký? <a href="#">Đăng nhập</a></p>
+            <p class="message">Already registered? <a href="#">Log in</a></p>
         </form>
         <form class="login-form" method="POST">
             {% csrf_token %}
@@ -139,8 +139,8 @@
             <input name="password" type="password" placeholder="password"/>
             <input name="login" type="text" value="login" hidden>
             <button>login</button>
-            <p class="message">Chưa đăng ký? 
-                <a href="#">Tạo tài khoản</a>
+            <p class="message">Not registered yet?
+                <a href="#">Create an account</a>
             </p>
         </form>
     </div>

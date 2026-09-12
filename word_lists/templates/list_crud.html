@@ -37,7 +37,7 @@
                         $('#deletelistmodel').modal('hide');
 
                         $('#add_edit_word_model select#list_choose').load(document.URL +  ' #add_edit_word_model select#list_choose>*');
-                        $('#sentence_group').load(document.URL +  ' #sentence_group');
+                        $('#sentence_group').load(document.URL +  ' #sentence_group', function(){ renumber_words(); });
                     }
                 })
         }
@@ -64,44 +64,44 @@
         }
     }
     $(document).on('click', '.add_list', function(){
-        $('#addOrEditlistmodel .modal-title').text('Thêm danh sách')
+        $('#addOrEditlistmodel .modal-title').text('Add list')
 
-        $('#addOrEditlistmodel .btn').text('Thêm')
+        $('#addOrEditlistmodel .btn').text('Add')
         $('#addOrEditlistmodel .btn').off("click")
         $('#addOrEditlistmodel .btn').click(function() {
                 list_crud('c');
             });
     });
     $(document).on('click', '.edit_list', function(){
-        $('#addOrEditlistmodel .modal-title').text('Sửa danh sách')
+        $('#addOrEditlistmodel .modal-title').text('Edit list')
 
-        $('#addOrEditlistmodel .btn').text('Sửa')
+        $('#addOrEditlistmodel .btn').text('Save')
         $('#addOrEditlistmodel .btn').off("click")
         $('#addOrEditlistmodel .btn').click(function() {
                 list_crud('u');
             });
 
         list=$(this).parentsUntil("div").siblings().first()
-        $('#addOrEditlistmodel input#listname').val(list.text().trim())
+        $('#addOrEditlistmodel input#listname').val(list.data('listname'))
     });
     $(document).on('click', '.delete_list', function(){
         list=$(this).parentsUntil("div").siblings().first()
-        $('#deletelistmodel .deleted_list_name').text(list.text().trim())
+        $('#deletelistmodel .deleted_list_name').text(list.data('listname'))
     });
 </script>
 <div class="modal fade" id="addOrEditlistmodel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Thêm/Sửa</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Add/Edit</h5>
             <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
-            <input id="listname" class="form-control" type="text" placeholder="Tên danh sách">
+            <input id="listname" class="form-control" type="text" placeholder="List name">
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-warning">Thêm/Sửa</button>
+            <button type="button" class="btn btn-warning">Add/Save</button>
         </div>
         </div>
     </div>
@@ -110,16 +110,16 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Xoá danh sách</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Delete list</h5>
             <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
-            <p>Xóa danh sách sẽ bao gồm các từ vựng của nó</p>
-            <p>Xoá <strong class="deleted_list_name"></strong></p>
+            <p>Deleting a list will also delete its words</p>
+            <p>Delete <strong class="deleted_list_name"></strong></p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-danger" onclick="list_crud('d');">Xóa</button>
+            <button type="button" class="btn btn-danger" onclick="list_crud('d');">Delete</button>
         </div>
         </div>
     </div>

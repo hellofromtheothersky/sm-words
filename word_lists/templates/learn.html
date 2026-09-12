@@ -7,35 +7,35 @@
     function highlight_words(text, positions) {
         // Split the text into words
         const words = text.split(' ');
-        highlight_part=[]
-        // Create a new array to hold the transformed words
-        const visual_sentence = words.map((word, index) => {
+        const parts = [];
+        let highlight_part = [];
+        words.forEach((word, index) => {
             if (positions.includes(index)) {
-                highlight_part.push(word)
-            }
-            else{
-                if (highlight_part.length>0){
-                    hidden_tokens=`<span class="hidden_tokens">${highlight_part.join(" ")}
-                                    </span> ${word}`;
-                    highlight_part=[]
-                    return hidden_tokens
+                highlight_part.push(word);
+            } else {
+                if (highlight_part.length > 0) {
+                    parts.push(`<span class="hidden_tokens">${highlight_part.join(' ')}</span>`);
+                    highlight_part = [];
                 }
-                else
-                    return word;
+                parts.push(word);
             }
         });
+        // Flush a trailing highlighted run (e.g. when the answer is the last word)
+        if (highlight_part.length > 0) {
+            parts.push(`<span class="hidden_tokens">${highlight_part.join(' ')}</span>`);
+        }
 
         // Join the words back into a single string and wrap in a <p> tag
-        return `<p>${visual_sentence.join(' ')}</p>`;
+        return `<p>${parts.join(' ')}</p>`;
     }
 
     function switch_learn_mode(){
         $('div#list_word_mode').attr('hidden', 'hidden');
         $('div#learn_mode').removeAttr("hidden");
 
-        // Disable all buttons
-        $('td#control button').attr("disabled", "disabled").off('click');
-        $('td#control button#learn').attr('hidden', 'hidden');
+        // Disable the control column (list selection, add list/word, crud toggle) while quizzing
+        $('#control').addClass('controls-disabled');
+        $('#crud_mode').addClass('controls-disabled');
 
         $('div#learn_mode #question_set').addClass('fade-in');
         $('div#learn_mode button').addClass('fade-in');
@@ -50,7 +50,7 @@
 
     function show_result(){
         $('.loading-bar').attr('hidden', 'hidden');
-        $('#selected_list_name').text("Kết quả")
+        $('#selected_list_name').text("Results")
 
         let correct = [];
         let question_ids = [];
@@ -59,19 +59,16 @@
             let value = $('#question_set li#' + question.sentence_id + ' input').val(); // Get the value of the input
             $('#question_set li#' + question.sentence_id + ' .hidden_tokens').text(question.lemma); // Display the lemma in the specified element
 
-            let result = $('<p></p>').text(value); // Create a new paragraph with the input value
-
             if (value !== question.lemma) {
-                result.text('❌: '+result.text());
+                $('#question_set li#' + question.sentence_id).append($('<p class="text-danger"></p>').text('✗: ' + value));
+                $('#question_set li#' + question.sentence_id).append($('<p class="text-success"></p>').text('✓: ' + question.lemma + ' (' + question.meaning + ')'));
                 correct.push(false);
             } else {
-                result.text('✅: '+result.text());
+                $('#question_set li#' + question.sentence_id).append($('<p class="text-success"></p>').text('✓: ' + value + ' (' + question.meaning + ')'));
                 correct.push(true);
             }
 
             question_ids.push(question.sentence_id);
-
-            $('#question_set li#' + question.sentence_id).append(result); // Append the result paragraph to the list item
             $('#question_set li#' + question.sentence_id + ' input').remove(); // Remove the old input
 
             if (correct.includes(false)) $('.loading-bar_fail').removeAttr("hidden");
@@ -96,12 +93,15 @@
 
      $(document).on('click', 'button#learn', function(){
         switch_learn_mode()
-        $('#selected_list_name').text("Kiểm tra")
+        $('#selected_list_name').text("Quiz")
 
         $.ajax({
                     url: "/ajax_get_questions/",
                     type: 'get',
                     contentType: 'appication/json',
+                    data: {
+                        'list_id': selected_list_id
+                    },
                     success: function(response){
                         $("#learn_mode #question_set").empty();
                         question_data=response.questions
@@ -143,5 +143,5 @@
         <!-- <li class="list-group-item">Cras justo odio</li> -->
     </ol>
     <br>
-    <button id="submit" type="button" class="btn btn-primary btn-lg">Xong</button>
+    <button id="submit" type="button" class="btn btn-primary btn-lg">Done</button>
 </div>

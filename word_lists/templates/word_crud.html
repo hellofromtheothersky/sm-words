@@ -57,7 +57,7 @@
                         'action': 'c'
                 },
                 success: function(response){
-                    $('#sentence_group').load(document.URL +  ' #sentence_group');
+                    $('#sentence_group').load(document.URL +  ' #sentence_group', function(){ renumber_words(); });
                     $('#add_edit_word_model').modal('hide');
                 }
             })
@@ -73,7 +73,7 @@
                         'action': 'd'
                     },
                     success: function(response){
-                        $('#sentence_group').load(document.URL +  ' #sentence_group');
+                        $('#sentence_group').load(document.URL +  ' #sentence_group', function(){ renumber_words(); });
                         $('#delete_word_model').modal('hide');
                     }
                 })
@@ -94,8 +94,8 @@
                         'action': 'u'
                     },
                     success: function(response){
-                        $('#sentence_group').load(document.URL +  ' #sentence_group');
-                        $('#add_edit_word_model').modal('hide');                    
+                        $('#sentence_group').load(document.URL +  ' #sentence_group', function(){ renumber_words(); });
+                        $('#add_edit_word_model').modal('hide');
                     }
                 })
         }
@@ -124,8 +124,8 @@
             $('#add_edit_word_model #summit_button').click(function() {
                     word_crud('c');
                 });
-            $('#add_edit_word_model #summit_button').text('Thêm')
-            $('#add_edit_word_model .modal-title').text('Thêm từ vựng')
+            $('#add_edit_word_model #summit_button').text('Add')
+            $('#add_edit_word_model .modal-title').text('Add word')
             $('#choose_words').attr('hidden', true);
             $('#setup_and_submit').attr('hidden', true)
             $('#add_edit_word_model input#sentence').val('')
@@ -135,22 +135,23 @@
 
 
         $(document).on('click', '#edit_word', function(){
-            $('#add_edit_word_model #summit_button').text('Sửa')
-            $('#add_edit_word_model .modal-title').text('Sửa từ vựng')
+            $('#add_edit_word_model #summit_button').text('Save')
+            $('#add_edit_word_model .modal-title').text('Edit word')
             $('#choose_words').removeAttr('hidden');
             $('#setup_and_submit').removeAttr('hidden')
 
-            // Find the closest parent with the class "sentence_show"
-            var parentDiv = $(this).closest('#sentence_show');
+            // Find the closest example (this specific sentence) and its word group
+            var exampleDiv = $(this).closest('.word_example');
+            var groupDiv = $(this).closest('.sentence_show');
             // Get the texts of the relevant elements
-            var lemma = parentDiv.find('#word_lemma').text().trim();
-            var meaning = parentDiv.find('#word_meaning').text().trim();
-            var sentence = parentDiv.find('#sentence').text().trim();
-            var note = parentDiv.find('#note').text().trim();
-            var word_start_pos = parentDiv.data('wstart')
-            var word_end_pos = parentDiv.data('wend')
-            var list_id = parentDiv.data('lists_id')
-            var sentence_id = parentDiv.data('sent_id')
+            var lemma = groupDiv.find('#word_lemma').text().trim();
+            var meaning = exampleDiv.find('#word_meaning').text().trim();
+            var sentence = exampleDiv.find('#sentence').text().trim();
+            var note = exampleDiv.find('#note').text().trim();
+            var word_start_pos = exampleDiv.data('wstart')
+            var word_end_pos = exampleDiv.data('wend')
+            var list_id = groupDiv.data('lists_id')
+            var sentence_id = exampleDiv.data('sent_id')
 
             $('#add_edit_word_model input#sentence').val(sentence)
             print_sentence_to_choose(sentence)
@@ -169,12 +170,13 @@
 
         $(document).on('click', '#delete_word', function(){
             console.log('delete_word')
-            // Find the closest parent with the class "sentence_show"
-            var parentDiv = $(this).closest('#sentence_show');
+            // Find the closest example (this specific sentence) and its word group
+            var exampleDiv = $(this).closest('.word_example');
+            var groupDiv = $(this).closest('.sentence_show');
             // Get the texts of the relevant elements
-            var lemma = parentDiv.find('#word_lemma').text().trim();
-            var sentence = parentDiv.find('#sentence').text().trim();
-            var sentence_id = parentDiv.data('sent_id')
+            var lemma = groupDiv.find('#word_lemma').text().trim();
+            var sentence = exampleDiv.find('#sentence').text().trim();
+            var sentence_id = exampleDiv.data('sent_id')
             $('#delete_word_model #deleted_word').text(lemma)
             $('#delete_word_model #deleted_sentence').text("\""+sentence+"\"")
             $('#delete_word_model #summit_button').off('click');
@@ -190,26 +192,26 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Thêm/Sửa từ vựng</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Add/Edit word</h5>
             <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
-            <input id='sentence' class='form-control form-control-lg' type="text" placeholder="Nhập câu" name="sentence"><br>
-            <div id="choose_words"><p class="tittle">Chọn từ</p></div>
+            <input id='sentence' class='form-control form-control-lg' type="text" placeholder="Enter a sentence" name="sentence"><br>
+            <div id="choose_words"><p class="tittle">Choose word</p></div>
             <div id="setup_and_submit">
                 <div class="word_info">
                     <table>
                         <tr>
                             <td style="vertical-align: top">
                                 <div style="display: flex;">
-                                    <p class="tittle">Từ đã chọn:&nbsp;</p> 
+                                    <p class="tittle">Chosen word:&nbsp;</p> 
                                     <p id="word_choosed" class="content_text" style="color: #b9be11;"></p>
                                 </div>
-                                <input id='meaning' type="text" class="form-control" placeholder="Nghĩa">
+                                <input id='meaning' type="text" class="form-control" placeholder="Meaning">
                             </td>
                             <td style="vertical-align: top;">
-                                <p id="note" style="margin-left: 12px;" class="tittle">Ghi chú</p>
+                                <p id="note" style="margin-left: 12px;" class="tittle">Note</p>
                                 <textarea style="margin-left: 12px;" id="note" class='text-area' cols="30" rows="10"></textarea>
                             </td>
                         </tr>
@@ -221,7 +223,7 @@
                     <option value={{ list.list_id }}>{{ list.listname }}</option>
                     {% endfor %}
                 </select>
-                <button id="summit_button" class="e-button">Thêm/Sửa</button>
+                <button id="summit_button" class="e-button">Add/Save</button>
             </div>
         </div>
     </div>
@@ -231,16 +233,16 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Xoá từ</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Delete word</h5>
             <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
         <div class="modal-body">
-            <p>Xoá <strong id="deleted_word"></strong> trong:</p>
+            <p>Delete <strong id="deleted_word"></strong> in:</p>
             <p id="deleted_sentence"></p>
         </div>
         <div class="modal-footer">
-            <button id="summit_button" type="button" class="btn btn-danger">Xóa</button>
+            <button id="summit_button" type="button" class="btn btn-danger">Delete</button>
         </div>
         </div>
     </div>

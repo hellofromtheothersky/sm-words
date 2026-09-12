@@ -4,35 +4,49 @@
 <link rel="stylesheet" href="{% static 'css/style_word_crud.css' %}">
 <script>
     var crud_mode=1
+    var selected_list_id=null
     function switch_crud_mode(){
         crud_mode*=-1
         if(crud_mode==1)
         {
-            $('#crud_mode').text('Tắt chỉnh sửa')
+            $('#crud_mode').text('Turn off editing')
             $('.crud').each(function() {
                 $(this).removeAttr("hidden");
             });
         }
         else
         {
-            $('#crud_mode').text('Chỉnh sửa')
+            $('#crud_mode').text('Edit')
             $('.crud').each(function() {
                 $(this).attr('hidden', 'hidden');
             });
         }
     }
 
+    function renumber_words(){
+        var i = 1;
+        $('.sentence_show').each(function() {
+            if ($(this).is(':visible')) {
+                $(this).find('.order_number').text(i + '.');
+                i++;
+            } else {
+                $(this).find('.order_number').text('');
+            }
+        });
+    }
+
     $(document).ready(function(){
-        $("a[id='my_vocab']").addClass("active");
         switch_crud_mode()
         // Set initial active state
         $('.list_of_word_all').addClass('active');
+        renumber_words();
     });
 
     //choose list
     $(document).on('click', '.list_of_word', function(){
         list_id=$(this).attr('id')
-        list_name=$(this).text().trim()
+        list_name=$(this).data('listname')
+        selected_list_id=list_id
         $('#selected_list_name').text(list_name)
         // Remove active class from all lists
         $('.list_of_word, .list_of_word_all').removeClass('active');
@@ -44,9 +58,11 @@
             else
                 $(this).attr('hidden', 'hidden');
         });
+        renumber_words();
     });
     $(document).on('click', '.list_of_word_all', function(){
-        $('#selected_list_name').text('Tất cả')
+        selected_list_id=null
+        $('#selected_list_name').text('All')
         // Remove active class from all lists
         $('.list_of_word, .list_of_word_all').removeClass('active');
         // Add active class to "All" list
@@ -54,6 +70,7 @@
         $('.sentence_show').each(function() {
             $(this).removeAttr("hidden");
         });
+        renumber_words();
     });
 
     //switch crud mode
@@ -90,18 +107,61 @@
         color: white !important;
         border-color: #b9be11 !important;
     }
+    .order_number {
+        min-width: 28px;
+        color: #6c757d;
+    }
+    .word_example {
+        margin-top: 4px;
+        padding-top: 4px;
+    }
+    .word_example + .word_example {
+        border-top: 1px dashed #dee2e6;
+    }
+    .example_sentence {
+        font-style: italic;
+    }
+    #word_meaning::before {
+        content: "- ";
+    }
+    .example_note {
+        display: flex;
+        gap: 0.35em;
+        color: #495057;
+    }
+    .example_note_label {
+        flex: none;
+        font-weight: 600;
+    }
+    .example_note_content {
+        font-style: italic;
+        white-space: pre-line;
+        line-height: 1.8;
+    }
+    .controls-disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+    #selected_list_name {
+        position: sticky;
+        top: 0;
+        margin: 0;
+        padding: 10px 0 10px 20px;
+        z-index: 1;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        background-color: rgba(255, 255, 255, 0.6);
+    }
 </style>
-<p class="header">Từ vựng của tôi</p>
-<br>
-<button id="crud_mode" type="button" class="btn btn-link">Chỉnh sửa/Tắt chỉnh sửa</button>
+<button id="crud_mode" type="button" class="btn btn-link">Edit/Turn off editing</button>
 <div class="main-container">
     <div id="control" class="control-column">
         <div id="list_word_group" class="list-group">
-            <a href="#" class="list_of_word_all list-group-item list-group-item-action list-group-item-dark">Tất cả</a>
+            <a href="#" class="list_of_word_all list-group-item list-group-item-action list-group-item-dark">All ({{ sents|length }})</a>
             {% for list in lists %}
             <div style="display: flex;">
-                <a id="{{ list.list_id }}" href="#" class="list_of_word list-group-item list-group-item-action list-group-item-secondary">
-                    {{ list.listname }}
+                <a id="{{ list.list_id }}" href="#" data-listname="{{ list.listname }}" class="list_of_word list-group-item list-group-item-action list-group-item-secondary">
+                    {{ list.listname }} ({{ list.word_count }})
                 </a>
                 <table class="crud">
                     <tr>
@@ -117,44 +177,58 @@
             {% endfor %}
         </div>
         <br>
-        <button type="button" class="add_list btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrEditlistmodel">+ danh sách</button>
-        <button type="button" class="btn btn-primary btn-sm" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">+ từ vựng</button>
+        <button type="button" class="add_list btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOrEditlistmodel">+ list</button>
+        <button type="button" class="btn btn-primary btn-sm" id="add_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model">+ word</button>
         <div class="learn-container">
-            <button type="button" class="btn-grad:hover btn-grad" id="learn">Học</button>
+            <button type="button" class="btn-grad:hover btn-grad" id="learn">Learn</button>
             <button type="button" class="btn btn-warning btn-sm crud overlay-button edit_learn" id="edit_learn" data-bs-toggle="modal" data-bs-target="#addOrEditlearnmodel" hidden></button>
         </div>
     </div>
     
     <div id="content" class="content-column">
-    <h2 id="selected_list_name">Tất cả</h2>
+    <h2 id="selected_list_name">All</h2>
 
         <div id="list_word_mode">
             <ol id="sentence_group" class="list-group list-group-numbered">
-                {% for sent in sents %}
-                <div id="sentence_show" class="sentence_show" data-lists_id="{{ sent.list_id }}" data-sent_id="{{ sent.sentence_id }}" data-wstart="{{ sent.word_start_pos }}" data-wend="{{ sent.word_end_pos }}">
+                {% for group in word_groups %}
+                <div class="sentence_show" data-lists_id="{{ group.list_id }}">
                     <li class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
+                        <div class="ms-2 me-auto" style="width: 100%;">
                             <div style="display: flex;">
-                                <div id="word_lemma" class="fw-bold">{{ sent.lemma }}</div>
-                                <div class="ms-2 text-muted">{{ sent.list_name }}</div>
-                                <table class="crud" style="text-align: right;">
-                                    <tr>
-                                        <td >
-                                            <button type="button" class="btn btn-warning btn-sm" id="edit_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model"></button>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm" id="delete_word" data-bs-toggle="modal" data-bs-target="#delete_word_model"></button>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <div class="order_number fw-bold"></div>
+                                <div id="word_lemma" class="fw-bold">{{ group.lemma }}</div>
+                                <div class="ms-2 text-muted">{{ group.list_name }}</div>
                             </div>
-                            <p id="word_meaning" style="margin: 0px 0px 0px 0px;">{{ sent.meaning }}</p>
-                            <p id="sentence" style="margin: 0px 0px 0px 20px;">{{ sent.sentence }}</p>
-                            <p id="note" style="margin: 0px 0px 0px 20px;">{{ sent.note }}</p>
+                            {% for ex in group.examples %}
+                            <div class="word_example" data-sent_id="{{ ex.sentence_id }}" data-wstart="{{ ex.word_start_pos }}" data-wend="{{ ex.word_end_pos }}">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <p id="word_meaning" style="margin: 0px;">{{ ex.meaning }}</p>
+                                    <table class="crud" style="text-align: right;">
+                                        <tr>
+                                            <td>
+                                                <button type="button" class="btn btn-warning btn-sm" id="edit_word" data-bs-toggle="modal" data-bs-target="#add_edit_word_model"></button>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm" id="delete_word" data-bs-toggle="modal" data-bs-target="#delete_word_model"></button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <p id="sentence" class="example_sentence" style="margin: 0px 0px 0px 20px;">{{ ex.sentence }}</p>
+                                {% if ex.note %}
+                                <div class="example_note" style="margin: 0px 0px 0px 20px;">
+                                    <span class="example_note_label">Note:</span>
+                                    <span id="note" class="example_note_content">{{ ex.note }}</span>
+                                </div>
+                                {% else %}
+                                <p id="note" hidden style="margin: 0px 0px 0px 20px;"></p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
                         </div>
                     </li>
                 </div>
-                {% endfor %}    
+                {% endfor %}
             </ol>
         </div>
         {% include 'learn.html' %}
